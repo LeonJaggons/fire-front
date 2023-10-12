@@ -1,12 +1,6 @@
 import Head from "next/head";
 
-import Layout from "@components/Layout";
-import Section from "@components/Section";
-import Container from "@components/Container";
-import Map from "@components/Map";
-import Button from "@components/Button";
-
-import styles from "@styles/Home.module.scss";
+import Map from "../components/Map/Map";
 
 const DEFAULT_CENTER = [38.907132, -77.036546];
 
@@ -22,10 +16,8 @@ export default function Home() {
                 <link rel="icon" href="/favicon.ico" />
             </Head>
 
-
             <Map
-                className={styles.homeMap}
-                stye={{ width: "100%", height: "200px" }}
+                style={{ width: "100%", height: "100%" }}
                 center={DEFAULT_CENTER}
                 zoom={12}
             >
