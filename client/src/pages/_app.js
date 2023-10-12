@@ -1,5 +1,5 @@
 "use client";
-import { FireFrontHeader } from "@/components/app/FireFrontHeader";
+import { FireFrontHeader } from "../components/app/FireFrontHeader";
 import "@/styles/globals.css";
 import { ChakraProvider, Box } from "@chakra-ui/react";
 
