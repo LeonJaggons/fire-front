@@ -5,6 +5,14 @@ import { Center } from "@chakra-ui/layout";
 import { Spinner } from "@chakra-ui/spinner";
 import { useEffect } from "react";
 import { ReportModal } from "./ReportModal";
+import ReactDOMServer from "react-dom/server";
+import { MdMemory } from "react-icons/md";
+import { icons } from "react-icons";
+import {
+    GiJetFighter,
+    GiMachineGunMagazine,
+    GiPublicSpeaker,
+} from "react-icons/gi";
 
 export const ConflictMap = () => {
     const selectedConflict = useSelector(
@@ -22,7 +30,29 @@ export const ConflictMap = () => {
 
     useEffect(() => {
         console.log(conflictEvents);
+        console.log(ReactDOMServer.renderToString(<MdMemory />));
     }, [conflictEvents]);
+    const getMarkerIcon = (ceName) => {
+        let iconSvg;
+
+        console.log(ceName);
+        switch (ceName) {
+            case "Airstrike/Bombing":
+                iconSvg = GiJetFighter;
+                break;
+            case "Firefight/Shooting":
+                iconSvg = GiMachineGunMagazine;
+                break;
+            case "Leader Announcement":
+                iconSvg = GiPublicSpeaker;
+                break;
+        }
+        console.log(iconSvg);
+        return L.divIcon({
+            html: ReactDOMServer.renderToString(iconSvg),
+            iconSize: [30, 30],
+        });
+    };
     return selectedConflict && selectedConflict.name ? (
         <>
             <ReportModal />
@@ -45,6 +75,7 @@ export const ConflictMap = () => {
                         />
                         {conflictEvents?.map((ce) => (
                             <Marker
+                                // icon={getMarkerIcon(ce.conflictEventType.name)}
                                 position={[ce.latitude, ce.longitude]}
                             ></Marker>
                         ))}

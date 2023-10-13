@@ -6,6 +6,7 @@ import {
     query,
     where,
 } from "@firebase/firestore";
+import axios from "axios";
 import { find } from "lodash";
 import { fireStore } from "src/firebase/firebase-init";
 import {
@@ -60,6 +61,8 @@ export const loadConflictEventTypes = async () => {
     store.dispatch(setConflictEventTypes(conflictEventTypes));
 };
 export const publishConflictEvent = async () => {
+    const ipAddr = (await axios.get("'https://api.ipify.org?format=json'")).data
+        .ip;
     const selectedConflict = store.getState().conflict.selectedConflict;
     const newConflictEvent = store.getState().conflict.newConflictEvent;
     const reportLocation = store.getState().conflict.reportLocation;
@@ -69,6 +72,7 @@ export const publishConflictEvent = async () => {
         conflictId: selectedConflict.id,
         latitude: reportLocation[0],
         longitude: reportLocation[1],
+        ipAddr: ipAddr,
     };
 
     await addDoc(conflictEventCollection, conflictEvent);

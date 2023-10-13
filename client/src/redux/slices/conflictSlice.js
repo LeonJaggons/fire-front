@@ -15,6 +15,7 @@ const initialState = {
     newConflictEvent: EmptyConflictEvent,
     conflictEvents: [],
     selectedConflictEvent: null,
+    sideBarState: "CONFLICT",
 };
 export const conflictSlice = createSlice({
     name: "conflict",
@@ -74,6 +75,9 @@ export const conflictSlice = createSlice({
         setSelectedConflictEvent: (state, action) => {
             state.selectedConflictEvent = action.payload;
         },
+        setSideBarState: (state, action) => {
+            state.sideBarState = action.payload;
+        },
     },
 });
 
@@ -90,6 +94,7 @@ export const {
     clearNewConflict,
     setConflictEvents,
     setSelectedConflictEvent,
+    setSideBarState,
 } = conflictSlice.actions;
 
 export default conflictSlice.reducer;

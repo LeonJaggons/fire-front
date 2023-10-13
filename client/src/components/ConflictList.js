@@ -11,7 +11,9 @@ import {
 import { Icon } from "@chakra-ui/icon";
 import {
     MdCampaign,
+    MdCheck,
     MdComment,
+    MdDoneAll,
     MdFlight,
     MdLocalFireDepartment,
     MdMoreVert,
@@ -25,14 +27,21 @@ import {
 } from "react-icons/pi";
 import { Button, IconButton } from "@chakra-ui/button";
 import { useEffect, useState } from "react";
-import { setSelectedConflictEvent } from "src/redux/slices/conflictSlice";
 import {
+    setSelectedConflictEvent,
+    setSideBarState,
+} from "src/redux/slices/conflictSlice";
+import {
+    GiArtilleryShell,
     GiJetFighter,
     GiMachineGun,
     GiMachineGunMagazine,
+    GiMushroomCloud,
     GiPublicSpeaker,
 } from "react-icons/gi";
 import { Collapse } from "@chakra-ui/transition";
+import moment from "moment/moment";
+import { Progress } from "@chakra-ui/progress";
 
 export const ConflictList = () => {
     const clickToReportMode = useSelector(
@@ -46,23 +55,9 @@ export const ConflictList = () => {
             // bg={"black"}
             h={"full"}
             alignItems={"flex-start"}
-            minW={"23vw"}
-            bg={"rgb(17,19,21)"}
+            w={"full"}
             spacing={0}
         >
-            <Box
-                p={4}
-                bg={false ? "red.500" : "whiteAlpha.200"}
-                borderBottom={"1px solid rgba(0,0,0,.1)"}
-                w={"full"}
-                color={"white"}
-            >
-                <Heading size={"md"} color={"white"} mb={1}>
-                    Conflict Events
-                </Heading>
-                <Text fontSize={12}>Last updated</Text>
-            </Box>
-
             {conflictEvents?.map((c) => (
                 <ConflictEvent c={c} />
             ))}
@@ -86,6 +81,10 @@ const ConflictEvent = ({ c }) => {
                 return GiMachineGunMagazine;
             case "Leader Announcement":
                 return GiPublicSpeaker;
+            case "Artillery":
+                return GiArtilleryShell;
+            case "Explosion":
+                return GiMushroomCloud;
         }
         return null;
     };
@@ -95,8 +94,18 @@ const ConflictEvent = ({ c }) => {
     return (
         <Box
             shadow={"sm"}
-            _hover={{ shadow: "md", bg: "whiteAlpha.50" }}
+            _hover={{ shadow: "md", bg: "whiteAlpha.100" }}
             w={"full"}
+            bg={
+                selectedConflictEvent &&
+                selectedConflictEvent.id === c.id &&
+                "whiteAlpha.50"
+            }
+            borderLeft={
+                selectedConflictEvent &&
+                selectedConflictEvent.id === c.id &&
+                "6px solid rgba(255,255,255,.8)"
+            }
             p={4}
             py={2}
             onClick={handleClick}
@@ -111,11 +120,13 @@ const ConflictEvent = ({ c }) => {
                         bg={"red.600"}
                         borderRadius={"5px"}
                     >
-                        <Icon
-                            as={getFFIcon(c.conflictEventType.name)}
-                            color={"whiteAlpha.900"}
-                            boxSize={"28px"}
-                        />
+                        {c.conflictEventType && (
+                            <Icon
+                                as={getFFIcon(c.conflictEventType.name)}
+                                color={"whiteAlpha.900"}
+                                boxSize={"28px"}
+                            />
+                        )}
                     </Center>
                     <VStack
                         w={"full"}
@@ -127,7 +138,7 @@ const ConflictEvent = ({ c }) => {
                             {c.title}
                         </Heading>
 
-                        <Text fontSize={"sm"} color={"gray.400"} noOfLines={1}>
+                        <Text fontSize={"xs"} color={"gray.400"} noOfLines={1}>
                             {c.description}
                         </Text>
                     </VStack>
@@ -176,10 +187,31 @@ const ConflictEvent = ({ c }) => {
             <Collapse
                 in={selectedConflictEvent && selectedConflictEvent.id === c.id}
             >
-                <Divider my={2} borderColor={"whiteAlpha.200"} />
-                <HStack mb={1} spacing={0}>
+                <Box w={"full"} alignItems={"flex-start"} mb={2}>
+                    <HStack alignItems={"center"} spacing={1} mb={2}>
+                        <Icon
+                            as={MdDoneAll}
+                            color={"whiteAlpha.700"}
+                            boxSize={"12px"}
+                        />
+                        <Text fontSize={12} color={"whiteAlpha.700"}>
+                            Authenticity Score
+                        </Text>
+                    </HStack>
+                    <Progress
+                        borderRadius={5}
+                        size={"sm"}
+                        w={"full"}
+                        colorScheme={"whiteAlpha"}
+                        value={30}
+                        backgroundColor={"whiteAlpha.100"}
+                    />
+                </Box>
+
+                <HStack my={1} spacing={0}>
                     <Button
                         flex={1}
+                        onClick={() => dispatch(setSideBarState("COMMENT"))}
                         size={"sm"}
                         variant={"ghost"}
                         color={"whiteAlpha.500"}

@@ -8,7 +8,14 @@ import {
     HStack,
     Heading,
     Icon,
+    Input,
+    Modal,
+    ModalBody,
+    ModalContent,
+    ModalOverlay,
     Select,
+    Text,
+    VStack,
     useDisclosure,
 } from "@chakra-ui/react";
 import {
@@ -33,7 +40,9 @@ import {
     setSelectedConflictEvent,
     toggleClickToReportMode,
 } from "src/redux/slices/conflictSlice";
+import { toggleShowSignIn } from "src/redux/slices/accountSlice";
 import { find } from "lodash";
+import { handleClientScriptLoad } from "next/script";
 
 function MyApp({ Component, pageProps }) {
     return (
@@ -152,9 +161,9 @@ const AppMenu = () => {
         <HStack id={"app-menu"} spacing={8}>
             <ReportButton />
             <AppMenuItem>Map</AppMenuItem>
+            <AppMenuItem>About</AppMenuItem>
 
-            <AppMenuItem href={"/conflict"}>Conflict</AppMenuItem>
-            <SignInButton />
+            {/* <SignInButton /> */}
         </HStack>
     );
 };
@@ -196,19 +205,61 @@ const ReportButton = () => {
     );
 };
 const SignInButton = () => {
+    const dispatch = useDispatch();
+    const handleClick = () => {
+        dispatch(toggleShowSignIn());
+    };
     return (
-        <Button
-            fontWeight={400}
-            fontSize={"14px"}
-            variant={"link"}
-            color={"gray.400"}
-            p={0}
-            _hover={{ color: "white" }}
-            iconSpacing={2}
-            rightIcon={<Icon as={MdLogin} />}
-        >
-            Sign In
-        </Button>
+        <>
+            <Button
+                fontWeight={400}
+                fontSize={"14px"}
+                variant={"link"}
+                color={"gray.400"}
+                p={0}
+                _hover={{ color: "white" }}
+                iconSpacing={2}
+                onClick={handleClick}
+                rightIcon={<Icon as={MdLogin} />}
+            >
+                Sign In
+            </Button>
+            <SignInModal />
+        </>
+    );
+};
+
+const SignInModal = () => {
+    const showSignIn = useSelector((state) => state.account.showSignIn);
+
+    const dispatch = useDispatch();
+    const handleClose = () => {
+        dispatch(toggleShowSignIn());
+    };
+    return (
+        <Modal isOpen={showSignIn} onClose={handleClose} isCentered>
+            <ModalOverlay></ModalOverlay>
+            <ModalContent>
+                <ModalBody p={0}>
+                    <Box
+                        p={6}
+                        borderBottom={"1px solid rgba(0,0,0,.2)"}
+                        bg={"black"}
+                    >
+                        <Heading size={"lg"} color={"white"}>
+                            Sign In
+                        </Heading>
+                    </Box>
+
+                    <Box p={6}>
+                        <VStack w={"full"}>
+                            <Input />
+                            <Input />
+                        </VStack>
+                    </Box>
+                </ModalBody>
+            </ModalContent>
+        </Modal>
     );
 };
 const AppMenuItem = ({ children, href }) => {
