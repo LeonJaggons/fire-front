@@ -30,6 +30,8 @@ img {
     padding: 12px;
     justify-content: space-between;
     align-items: center;
+    z-index: 999;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
 }
 
 #app-content {
@@ -39,7 +41,8 @@ img {
 #app-menu > .app-menu-item {
     font-size: 14px;
     text-decoration: none;
-    color: black;
+    font-weight: 400;
+    color: white;
 }
 .map {
     width: 100%;
