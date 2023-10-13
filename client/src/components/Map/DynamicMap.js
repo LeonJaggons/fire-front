@@ -40,10 +40,31 @@ const Map = ({ children, className, width, height, ...rest }) => {
             },
         });
     };
+
+    const FlyToConflict = () => {
+        const selectedConflictEvent = useSelector(
+            (state) => state.conflict.selectedConflictEvent
+        );
+        const map = ReactLeaflet.useMap();
+        useEffect(() => {
+            console.log(selectedConflictEvent);
+            selectedConflictEvent &&
+                map &&
+                map.flyTo(
+                    [
+                        selectedConflictEvent.latitude,
+                        selectedConflictEvent.longitude,
+                    ],
+                    14
+                );
+        }, [selectedConflictEvent]);
+        return null;
+    };
     return (
         <MapContainer {...rest}>
             {children(ReactLeaflet, Leaflet)}
             <LocationFinder />
+            <FlyToConflict />
         </MapContainer>
     );
 };
