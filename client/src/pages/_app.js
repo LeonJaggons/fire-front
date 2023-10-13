@@ -30,6 +30,7 @@ import {
 } from "src/services/conflictService";
 import {
     setSelectedConflict,
+    setSelectedConflictEvent,
     toggleClickToReportMode,
 } from "src/redux/slices/conflictSlice";
 import { find } from "lodash";
@@ -122,6 +123,7 @@ const ConflictSelect = () => {
     const handleChange = (e) => {
         const conflict = find(conflicts, (c) => c.id === e.target.value);
 
+        dispatch(setSelectedConflictEvent(null));
         dispatch(setSelectedConflict(null));
         dispatch(setSelectedConflict(conflict));
     };
