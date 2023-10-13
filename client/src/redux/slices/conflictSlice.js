@@ -14,6 +14,7 @@ const initialState = {
     clickToReportMode: false,
     newConflictEvent: EmptyConflictEvent,
     conflictEvents: [],
+    selectedConflictEvent: null,
 };
 export const conflictSlice = createSlice({
     name: "conflict",
@@ -70,6 +71,9 @@ export const conflictSlice = createSlice({
         setConflictEvents: (state, action) => {
             state.conflictEvents = action.payload;
         },
+        setSelectedConflictEvent: (state, action) => {
+            state.selectedConflictEvent = action.payload;
+        },
     },
 });
 
@@ -85,6 +89,7 @@ export const {
     updateNewConflictEventTypeId,
     clearNewConflict,
     setConflictEvents,
+    setSelectedConflictEvent,
 } = conflictSlice.actions;
 
 export default conflictSlice.reducer;

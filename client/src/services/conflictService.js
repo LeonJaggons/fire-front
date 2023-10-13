@@ -90,6 +90,7 @@ export const streamConflictEvents = (conflictId) => {
                     store.getState().conflict.conflictEventTypes,
                     (o) => o.id === conflictEventData.conflictEventTypeId
                 ),
+                id: conflictDoc.id,
             };
             conflictEvents.push(conflictEvent);
         }

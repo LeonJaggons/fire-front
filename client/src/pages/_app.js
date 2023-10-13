@@ -17,8 +17,8 @@ import {
     useSelector,
 } from "react-redux";
 
-import { MdCampaign, MdSpeaker } from "react-icons/md";
-import { GiAwareness } from "react-icons/gi";
+import { MdCampaign, MdLogin, MdSpeaker } from "react-icons/md";
+import { GiAwareness, GiConfrontation, GiWalkieTalkie } from "react-icons/gi";
 import "@styles/globals.scss";
 import NextLink from "next/link";
 import { store } from "src/redux/store";
@@ -97,15 +97,15 @@ const AppHeader = () => {
             <HStack
                 id={"app-header"}
                 shadow={"md"}
-                spacing={"80px"}
                 h={"64px"}
-                bg={"black"}
+                spacing={"12px"}
+                bg={"rgb(17,19,21)"}
                 color={"white"}
             >
                 {/* <Heading size={"md"}`o>{appName}</Heading> */}
 
                 <HStack>
-                    <Icon as={GiAwareness} boxSize={"30px"} mr={2} />
+                    <Icon as={GiConfrontation} boxSize={"30px"} mr={6} />
                     <ConflictSelect />
                 </HStack>
                 <Box flex={1} />
@@ -152,6 +152,7 @@ const AppMenu = () => {
             <AppMenuItem>Map</AppMenuItem>
 
             <AppMenuItem href={"/conflict"}>Conflict</AppMenuItem>
+            <SignInButton />
         </HStack>
     );
 };
@@ -177,12 +178,14 @@ const ReportButton = () => {
                 fontWeight={400}
                 fontSize={"14px"}
                 variant={"ghost"}
-                color={!clickToReportMode ? "black" : "white"}
-                bg={!clickToReportMode ? "white" : "black"}
+                color={"gray.200"}
+                bg={!clickToReportMode ? "whiteAlpha.200" : "black"}
                 colorScheme={!clickToReportMode ? "blackAlpha" : "whiteAlpha"}
-                _hover={{
-                    bg: !clickToReportMode ? "gray.200" : "gray.800",
-                }}
+                _hover={
+                    {
+                        // bg: !clickToReportMode ? ".200" : "gray.800",
+                    }
+                }
                 rightIcon={<Icon as={MdCampaign} boxSize={"24px"} />}
             >
                 Report Event
@@ -190,9 +193,34 @@ const ReportButton = () => {
         </>
     );
 };
+const SignInButton = () => {
+    return (
+        <Button
+            fontWeight={400}
+            fontSize={"14px"}
+            variant={"link"}
+            color={"gray.400"}
+            p={0}
+            _hover={{ color: "white" }}
+            iconSpacing={2}
+            rightIcon={<Icon as={MdLogin} />}
+        >
+            Sign In
+        </Button>
+    );
+};
 const AppMenuItem = ({ children, href }) => {
     return (
-        <Link className="app-menu-item" href={href ?? "/"} as={NextLink}>
+        <Link
+            className="app-menu-item"
+            href={href ?? "/"}
+            as={NextLink}
+            color={"gray.400"}
+            ml={2}
+            _hover={{
+                color: "white",
+            }}
+        >
             {children}
         </Link>
     );
