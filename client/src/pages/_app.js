@@ -13,6 +13,10 @@ import {
     ModalBody,
     ModalContent,
     ModalOverlay,
+    Popover,
+    PopoverBody,
+    PopoverContent,
+    PopoverTrigger,
     Select,
     Text,
     VStack,
@@ -115,7 +119,7 @@ const AppHeader = () => {
                 {/* <Heading size={"md"}`o>{appName}</Heading> */}
 
                 <HStack>
-                    <Icon as={GiConfrontation} boxSize={"30px"} mr={6} />
+                    <Icon as={GiConfrontation} boxSize={"30px"} />
                     <ConflictSelect />
                 </HStack>
                 <Box flex={1} />
@@ -126,33 +130,74 @@ const AppHeader = () => {
 };
 
 const ConflictSelect = () => {
+    const selectedConflict = useSelector(
+        (state) => state.conflict.selectedConflict
+    );
     const conflicts = useSelector((state) => state.conflict.conflicts);
     const dispatch = useDispatch();
 
-    const handleChange = (e) => {
-        const conflict = find(conflicts, (c) => c.id === e.target.value);
+    const handleClick = (e) => {
+        const conflict = find(conflicts, (c) => c.id === e);
 
         dispatch(setSelectedConflictEvent(null));
         dispatch(setSelectedConflict(null));
         dispatch(setSelectedConflict(conflict));
     };
+
+    useEffect(() => {
+        conflicts && dispatch(setSelectedConflict(conflicts[0]));
+    }, [conflicts]);
     return (
-        <Select
-            variant={"unstyled"}
-            fontSize={"28px"}
-            fontWeight={"800"}
-            onChange={handleChange}
-            flex={"1 1 0px"}
-            justifyContent={"center"}
-            alignItems={"center"}
-            borderBottomColor={"white"}
-            _focus={{ borderColor: "white" }}
-            _active={{ borderColor: "white" }}
-        >
-            {conflicts?.map((c) => (
-                <option value={c.id}>{c.name}</option>
-            ))}
-        </Select>
+        <Popover zIndex={999} placement={"bottom-start"}>
+            <PopoverTrigger>
+                <Button
+                    variant={"ghost"}
+                    color={"white"}
+                    fontSize={"24px"}
+                    _hover={{ bg: "whiteAlpha.100" }}
+                >
+                    {selectedConflict?.name}
+                </Button>
+            </PopoverTrigger>
+            <PopoverContent
+                zIndex={999}
+                border={"none"}
+                shadow={"none"}
+                borderRadius={5}
+                overflow={"hidden"}
+            >
+                <PopoverBody bg={"rgb(36,38,39)"}>
+                    <VStack w={"full"} spacing={2}>
+                        {conflicts?.map((c) => (
+                            <Button
+                                variant={"ghost"}
+                                colorScheme={"whiteAlpha"}
+                                fontSize={"20px"}
+                                justifyContent={"flex-start"}
+                                color={"whiteAlpha.900"}
+                                onClick={() => handleClick(c.id)}
+                                w={"full"}
+                            >
+                                {c.name}
+                            </Button>
+                        ))}
+                    </VStack>
+                </PopoverBody>
+            </PopoverContent>
+        </Popover>
+        // <Select
+        //     variant={"unstyled"}
+        //     fontSize={"28px"}
+        //     fontWeight={"800"}
+        //     onChange={handleChange}
+        //     flex={"1 1 0px"}
+        //     justifyContent={"center"}
+        //     alignItems={"center"}
+        //     borderBottomColor={"white"}
+        //     _focus={{ borderColor: "white" }}
+        //     _active={{ borderColor: "white" }}
+        // >
+        // </Select>
     );
 };
 

@@ -1,6 +1,6 @@
 import Map from "./Map/Map";
 import { DEFAULT_CENTER } from "../pages";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Center } from "@chakra-ui/layout";
 import { Spinner } from "@chakra-ui/spinner";
 import { useEffect } from "react";
@@ -13,6 +13,8 @@ import {
     GiMachineGunMagazine,
     GiPublicSpeaker,
 } from "react-icons/gi";
+
+import { setSelectedConflictEvent } from "src/redux/slices/conflictSlice";
 
 export const ConflictMap = () => {
     const selectedConflict = useSelector(
@@ -61,7 +63,7 @@ export const ConflictMap = () => {
                     selectedConflict.latitude,
                     selectedConflict.longitude,
                 ])}
-                style={{ width: "100%", height: "100%" }}
+                style={{ width: "100%", height: "100%", zIndex: 1 }}
                 center={[selectedConflict.latitude, selectedConflict.longitude]}
                 zoom={selectedConflict.defaultZoom}
                 onClick={(e) => console.log(e)}
@@ -73,12 +75,6 @@ export const ConflictMap = () => {
                             attribution={providerAttr}
                             ext={"png"}
                         />
-                        {conflictEvents?.map((ce) => (
-                            <Marker
-                                // icon={getMarkerIcon(ce.conflictEventType.name)}
-                                position={[ce.latitude, ce.longitude]}
-                            ></Marker>
-                        ))}
                     </>
                 )}
             </Map>

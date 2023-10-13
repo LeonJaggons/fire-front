@@ -3,7 +3,7 @@ import Head from "next/head";
 import { ConflictMap } from "../components/ConflictMap";
 import { useDispatch, useSelector } from "react-redux";
 import { Alert } from "@chakra-ui/alert";
-import { Collapse } from "@chakra-ui/transition";
+import { Collapse, SlideFade } from "@chakra-ui/transition";
 import { Box, HStack, Heading, Text, VStack } from "@chakra-ui/layout";
 import { Icon } from "@chakra-ui/icon";
 import {
@@ -52,7 +52,7 @@ export default function Home() {
 
 const ConflictComments = () => {
     return (
-        <VStack flex={1} w={"full"} spacing={0}>
+        <VStack flex={1} h={"full"} w={"full"} spacing={0}>
             <Box flex={1} p={4} w={"full"}>
                 <Heading>Comments</Heading>
             </Box>
@@ -118,7 +118,7 @@ const ConflictSideBar = () => {
                             fontSize={"12px"}
                             mb={1}
                             leftIcon={<Icon as={MdChevronLeft} />}
-                            iconSpacing={"4px"}
+                            iconSpacing={"2px"}
                         >
                             Back to Events
                         </Button>
@@ -135,7 +135,24 @@ const ConflictSideBar = () => {
                     </Text>
                 )}
             </Box>
-            {getSideBarContent(sideBarState)}
+            {/* {getSideBarContent(sideBarState)} */}
+            <SlideFade
+                in={sideBarState === "CONFLICT"}
+                flex={1}
+                hidden={sideBarState !== "CONFLICT"}
+                style={{ flex: 1 }}
+            >
+                <ConflictList />
+            </SlideFade>
+            <SlideFade
+                h={"full"}
+                flex={1}
+                in={sideBarState === "COMMENT"}
+                hidden={sideBarState !== "COMMENT"}
+                style={{ flex: 1 }}
+            >
+                <ConflictComments />
+            </SlideFade>
         </VStack>
     );
 };

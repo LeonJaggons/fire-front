@@ -5,12 +5,17 @@ import "leaflet/dist/leaflet.css";
 import { useDispatch, useSelector } from "react-redux";
 import {
     setReportLocation,
+    setSelectedConflictEvent,
     toggleClickToReportMode,
 } from "src/redux/slices/conflictSlice";
+import { find } from "lodash";
 
 const { MapContainer } = ReactLeaflet;
 
 const Map = ({ children, className, width, height, ...rest }) => {
+    const conflictEvents = useSelector(
+        (state) => state.conflict.conflictEvents
+    );
     const dispatch = useDispatch();
     if (className) {
         mapClassName = `${mapClassName} ${className}`;
@@ -60,11 +65,34 @@ const Map = ({ children, className, width, height, ...rest }) => {
         }, [selectedConflictEvent]);
         return null;
     };
+    const ConflictMarker = ({ ce }) => {
+        const dispatch = useDispatch();
+        ReactLeaflet.useMapEvents({
+            click(e) {
+                const conflictEvent = find(
+                    conflictEvents,
+                    (o) =>
+                        o.latitude === ce.latitude &&
+                        o.longitude === ce.longitude
+                );
+                dispatch(setSelectedConflictEvent(conflictEvent));
+            },
+        });
+        return (
+            <ReactLeaflet.Marker
+                // icon={getMarkerIcon(ce.conflictEventType.name)}
+                position={[ce.latitude, ce.longitude]}
+            ></ReactLeaflet.Marker>
+        );
+    };
     return (
         <MapContainer {...rest}>
             {children(ReactLeaflet, Leaflet)}
             <LocationFinder />
             <FlyToConflict />
+            {conflictEvents?.map((ce) => (
+                <ConflictMarker ce={ce} />
+            ))}
         </MapContainer>
     );
 };
