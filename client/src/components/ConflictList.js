@@ -42,6 +42,7 @@ import {
 import { Collapse } from "@chakra-ui/transition";
 import moment from "moment/moment";
 import { Progress } from "@chakra-ui/progress";
+import { toggleShowSignIn } from "src/redux/slices/accountSlice";
 
 export const ConflictList = () => {
     const clickToReportMode = useSelector(
@@ -91,6 +92,36 @@ const ConflictEvent = ({ c }) => {
     useEffect(() => {
         console.log(c, selectedConflictEvent);
     }, [c, selectedConflictEvent]);
+
+    const user = useSelector((state) => state.account.user);
+    const handleCommentClick = () => {
+        if (user) {
+            dispatch(setSideBarState("COMMENT"));
+        } else {
+            dispatch(toggleShowSignIn());
+        }
+    };
+    const handleReportClick = () => {
+        if (user) {
+            // dispatch(setSideBarState("COMMENT"));
+        } else {
+            dispatch(toggleShowSignIn());
+        }
+    };
+    const handleUpvote = () => {
+        if (user) {
+            // dispatch(setSideBarState("COMMENT"));
+        } else {
+            dispatch(toggleShowSignIn());
+        }
+    };
+    const handleDownvote = () => {
+        if (user) {
+            // dispatch(setSideBarState("COMMENT"));
+        } else {
+            dispatch(toggleShowSignIn());
+        }
+    };
     return (
         <Box
             shadow={"sm"}
@@ -146,6 +177,7 @@ const ConflictEvent = ({ c }) => {
                         <IconButton
                             variant={"ghost"}
                             color={"whiteAlpha.500"}
+                            onClick={handleUpvote}
                             icon={
                                 <Icon
                                     boxSize={"24px"}
@@ -165,6 +197,7 @@ const ConflictEvent = ({ c }) => {
                         <IconButton
                             variant={"ghost"}
                             color={"whiteAlpha.500"}
+                            onClick={handleDownvote}
                             icon={
                                 <Icon
                                     boxSize={"24px"}
@@ -211,7 +244,7 @@ const ConflictEvent = ({ c }) => {
                 <HStack my={1} spacing={0}>
                     <Button
                         flex={1}
-                        onClick={() => dispatch(setSideBarState("COMMENT"))}
+                        onClick={handleCommentClick}
                         size={"sm"}
                         variant={"ghost"}
                         color={"whiteAlpha.500"}
@@ -228,6 +261,7 @@ const ConflictEvent = ({ c }) => {
                         color={"whiteAlpha.500"}
                         _hover={{ bg: "whiteAlpha.100", color: "white" }}
                         borderRadius={0}
+                        onClick={handleReportClick}
                     >
                         Report
                     </Button>

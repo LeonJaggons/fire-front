@@ -65,7 +65,12 @@ const ReportForm = () => {
     };
     return (
         <Box>
-            <Box p={6} borderBottom={"1px solid rgba(0,0,0,.2)"} bg={"black"}>
+            <Box
+                p={6}
+                py={4}
+                borderBottom={"1px solid rgba(0,0,0,.2)"}
+                bg={"black"}
+            >
                 <Heading size={"lg"} color={"white"}>
                     Report an Event
                 </Heading>

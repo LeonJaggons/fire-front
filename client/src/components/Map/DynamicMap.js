@@ -50,10 +50,14 @@ const Map = ({ children, className, width, height, ...rest }) => {
         const selectedConflictEvent = useSelector(
             (state) => state.conflict.selectedConflictEvent
         );
+        const reportLocation = useSelector(
+            (state) => state.conflict.reportLocation
+        );
         const map = ReactLeaflet.useMap();
         useEffect(() => {
             console.log(selectedConflictEvent);
-            selectedConflictEvent &&
+            !reportLocation &&
+                selectedConflictEvent &&
                 map &&
                 map.flyTo(
                     [
@@ -64,6 +68,29 @@ const Map = ({ children, className, width, height, ...rest }) => {
                 );
         }, [selectedConflictEvent]);
         return null;
+    };
+
+    const ReportMarker = () => {
+        const map = ReactLeaflet.useMap();
+        const selectedConflict = useSelector(
+            (state) => state.conflict.selectedConflict
+        );
+        const reportLocation = useSelector(
+            (state) => state.conflict.reportLocation
+        );
+        useEffect(() => {
+            if (reportLocation && map) {
+                map.flyTo(reportLocation, 13);
+            } else {
+                map.flyTo(
+                    [selectedConflict.latitude, selectedConflict.longitude],
+                    selectedConflict.defaultZoom
+                );
+            }
+        }, [reportLocation]);
+        return (
+            reportLocation && <ReactLeaflet.Marker position={reportLocation} />
+        );
     };
     const ConflictMarker = ({ ce }) => {
         const dispatch = useDispatch();
@@ -93,6 +120,7 @@ const Map = ({ children, className, width, height, ...rest }) => {
             {conflictEvents?.map((ce) => (
                 <ConflictMarker ce={ce} />
             ))}
+            <ReportMarker />
         </MapContainer>
     );
 };

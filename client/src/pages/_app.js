@@ -5,6 +5,7 @@ import {
     Button,
     ChakraProvider,
     Collapse,
+    Divider,
     HStack,
     Heading,
     Icon,
@@ -208,20 +209,26 @@ const AppMenu = () => {
             <AppMenuItem>Map</AppMenuItem>
             <AppMenuItem>About</AppMenuItem>
 
-            {/* <SignInButton /> */}
+            <SignInButton />
         </HStack>
     );
 };
 
 const ReportButton = () => {
     const { isOpen, onClose, onToggle } = useDisclosure();
+    const user = useSelector((state) => state.account.user);
     const clickToReportMode = useSelector(
         (state) => state.conflict.clickToReportMode
     );
 
     const dispatch = useDispatch();
     const handleClick = () => {
-        dispatch(toggleClickToReportMode());
+        if (user) {
+            dispatch(setSelectedConflictEvent(null));
+            dispatch(toggleClickToReportMode());
+        } else {
+            dispatch(toggleShowSignIn());
+        }
     };
 
     useEffect(() => {
@@ -288,6 +295,7 @@ const SignInModal = () => {
                 <ModalBody p={0}>
                     <Box
                         p={6}
+                        py={4}
                         borderBottom={"1px solid rgba(0,0,0,.2)"}
                         bg={"black"}
                     >
@@ -298,8 +306,39 @@ const SignInModal = () => {
 
                     <Box p={6}>
                         <VStack w={"full"}>
-                            <Input />
-                            <Input />
+                            <Box w={"full"}>
+                                <Text mb={1}>Username</Text>
+                                <Input />
+                            </Box>
+                            <Box w={"full"}>
+                                <Text mb={1}>Password</Text>
+                                <Input />
+                            </Box>
+                        </VStack>
+                    </Box>
+                    <Box p={6} py={4} borderTop={"1px solid rgba(0,0,0,.2)"}>
+                        <VStack w={"full"} spacing={4}>
+                            <Button
+                                w={"full"}
+                                bg={"black"}
+                                colorScheme="blackAlpha"
+                                size={"lg"}
+                                // onClick={handlePostReport}
+                                // isLoading={loading}
+                            >
+                                Continue
+                            </Button>
+                            {/* <HStack spacing={2} align={"center"} w={"full"}>
+                                <Divider flex={1}></Divider>
+                                <Text fontSize={10} color={"gray.400"}>
+                                    OR
+                                </Text>
+                                <Divider flex={1}></Divider>
+                            </HStack> */}
+
+                            <Button variant={"link"} color={"black"}>
+                                Dont have an account? Sign up
+                            </Button>
                         </VStack>
                     </Box>
                 </ModalBody>

@@ -2,6 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
     showSignIn: false,
+    user: null,
 };
 const accountSlice = createSlice({
     name: "account",
