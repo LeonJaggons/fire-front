@@ -317,6 +317,7 @@ const AppMenuItem = ({ children, href }) => {
             ml={2}
             _hover={{
                 color: "white",
+                fontWeight: 600,
             }}
         >
             {children}
