@@ -12,6 +12,7 @@ import {
     MdChevronLeft,
     MdOutlineArrowDownward,
     MdOutlineArrowUpward,
+    MdSend,
 } from "react-icons/md";
 import { Button, IconButton } from "@chakra-ui/button";
 import {
@@ -23,6 +24,14 @@ import { ConflictList } from "../components/ConflictList";
 import { Tabs } from "@chakra-ui/tabs";
 import moment from "moment";
 import { Input } from "@chakra-ui/input";
+import { onAuthStateChanged } from "firebase/auth";
+import { fireAuth } from "src/firebase/firebase-init";
+import { useEffect, useState } from "react";
+import {
+    loadConflictEventComments,
+    publishComment,
+} from "src/services/conflictService";
+import { Avatar } from "@chakra-ui/react";
 
 export const DEFAULT_CENTER = [38.907132, -77.036546];
 
@@ -51,19 +60,62 @@ export default function Home() {
 }
 
 const ConflictComments = () => {
+    const [content, setContent] = useState("");
+    const selectedComments = useSelector(
+        (state) => state.conflict.selectedComments
+    );
+    const handlePublish = async () => {
+        await publishComment(content);
+        setContent("");
+        await loadConflictEventComments();
+    };
+    useEffect(() => {
+        console.log("CMMENTS", selectedComments);
+    }, [selectedComments]);
     return (
-        <VStack flex={1} h={"full"} w={"full"} spacing={0}>
-            <Box flex={1} p={4} w={"full"}>
-                <Heading>Comments</Heading>
-            </Box>
+        <VStack flex={1} h={"full"} w={"24vw"} spacing={0}>
+            <VStack flex={1} p={4} w={"full"} alignItems={"flex-start"}>
+                {selectedComments?.map((c) => {
+                    return (
+                        <HStack spacing={3}>
+                            <Avatar name={c.userName} size={"sm"} />
+                            <Box p={2} bg={"whiteAlpha.200"} borderRadius={4}>
+                                <Heading
+                                    size={"xs"}
+                                    fontWeight={500}
+                                    fontSize={12}
+                                    color={"whiteAlpha.600"}
+                                >
+                                    {c.userName}
+                                </Heading>
+                                <Text color={"white"} fontSize={12}>
+                                    {c.content}
+                                </Text>
+                            </Box>
+                        </HStack>
+                    );
+                })}
+                {!selectedComments ||
+                    (selectedComments && selectedComments.length === 0 && (
+                        <Heading>Comments</Heading>
+                    ))}
+            </VStack>
+
             <Box p={4} w={"full"}>
                 <HStack w={"full"}>
                     <Input
+                        value={content}
+                        onChange={(e) => setContent(e.target.value)}
                         variant={"unstyled"}
                         placeholder={"Write a comment"}
                         flex={1}
                         style={{ caretColor: "white" }}
                         color={"whiteAlpha.800"}
+                    />
+                    <IconButton
+                        icon={<Icon as={MdSend} color={"red.500"} />}
+                        variant={"ghost"}
+                        onClick={handlePublish}
                     />
                 </HStack>
             </Box>
@@ -86,9 +138,28 @@ const ConflictSideBar = () => {
                 return <></>;
         }
     };
+    useEffect(() => {
+        const unsub = onAuthStateChanged(
+            fireAuth,
+            (user) => {
+                if (user) {
+                    console.log("USER", user);
+                } else {
+                    console.log("NOTHING");
+                }
+            },
+            (err) => {
+                console.log(err);
+            }
+        );
+        return () => {
+            unsub();
+        };
+    }, []);
     return (
         <VStack
-            minW={"23vw"}
+            minW={"20vw"}
+            maxW={"25vw"}
             h={"full"}
             bg={"rgb(17,19,21)"}
             alignItems={"flex-start"}

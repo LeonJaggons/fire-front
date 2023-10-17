@@ -1,4 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { store } from "../store";
 const EmptyConflictEvent = {
     conflictEventTypeId: "",
     title: "",
@@ -15,7 +16,9 @@ const initialState = {
     newConflictEvent: EmptyConflictEvent,
     conflictEvents: [],
     selectedConflictEvent: null,
+    selectedComments: [],
     sideBarState: "CONFLICT",
+    mapMode: "SEARCHING",
 };
 export const conflictSlice = createSlice({
     name: "conflict",
@@ -26,7 +29,6 @@ export const conflictSlice = createSlice({
         },
 
         setSelectedConflict: (state, action) => {
-            console.log(action.payload);
             if (action.payload) {
                 state.selectedConflict = { ...action.payload };
             } else {
@@ -78,6 +80,18 @@ export const conflictSlice = createSlice({
         setSideBarState: (state, action) => {
             state.sideBarState = action.payload;
         },
+        setMapSearching: (state) => {
+            state.mapMode = "SEARCHING";
+        },
+        setMapReset: (state) => {
+            state.mapMode = "RESET";
+        },
+        setMapMode: (state, action) => {
+            state.mapMode = action.payload;
+        },
+        setSelectedComments: (state, action) => {
+            state.selectedComments = action.payload;
+        },
     },
 });
 
@@ -95,6 +109,9 @@ export const {
     setConflictEvents,
     setSelectedConflictEvent,
     setSideBarState,
+    setMapReset,
+    setMapSearching,
+    setSelectedComments,
 } = conflictSlice.actions;
 
 export default conflictSlice.reducer;

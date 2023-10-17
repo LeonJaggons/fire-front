@@ -28,14 +28,18 @@ import {
 import { Button, IconButton } from "@chakra-ui/button";
 import { useEffect, useState } from "react";
 import {
+    setMapSearching,
     setSelectedConflictEvent,
     setSideBarState,
 } from "src/redux/slices/conflictSlice";
 import {
+    GiAk47,
     GiArtilleryShell,
+    GiGunshot,
     GiJetFighter,
     GiMachineGun,
     GiMachineGunMagazine,
+    GiMilitaryAmbulance,
     GiMushroomCloud,
     GiPublicSpeaker,
 } from "react-icons/gi";
@@ -43,6 +47,14 @@ import { Collapse } from "@chakra-ui/transition";
 import moment from "moment/moment";
 import { Progress } from "@chakra-ui/progress";
 import { toggleShowSignIn } from "src/redux/slices/accountSlice";
+import {
+    downvote,
+    loadConflictEventComments,
+    resetDownvote,
+    resetUpvote,
+    upvote,
+} from "src/services/conflictService";
+import { update } from "lodash";
 
 export const ConflictList = () => {
     const clickToReportMode = useSelector(
@@ -66,34 +78,55 @@ export const ConflictList = () => {
     );
 };
 const ConflictEvent = ({ c }) => {
+    const user = useSelector((state) => state.account.user);
     const [isUpvoted, setIsUpvoted] = useState();
+    const [isDownvoted, setIsDownvoted] = useState();
+    const [authScore, setAuthScore] = useState();
     const dispatch = useDispatch();
     const handleClick = () => {
         dispatch(setSelectedConflictEvent(c));
+        dispatch(setMapSearching());
     };
     const selectedConflictEvent = useSelector(
         (state) => state.conflict.selectedConflictEvent
     );
+
+    useEffect(() => {
+        console.log(user);
+        if (!user) {
+            setIsUpvoted(null);
+        } else {
+            setIsUpvoted(user.upvoted && user.upvoted.includes(c.id));
+            setIsDownvoted(user.downvoted && user.downvoted.includes(c.id));
+        }
+    }, [user]);
     const getFFIcon = (name) => {
         switch (name) {
             case "Airstrike/Bombing":
                 return GiJetFighter;
             case "Firefight/Shooting":
-                return GiMachineGunMagazine;
+                return GiGunshot;
             case "Leader Announcement":
                 return GiPublicSpeaker;
             case "Artillery":
                 return GiArtilleryShell;
             case "Explosion":
                 return GiMushroomCloud;
+            case "Humanitarian Aid":
+                return GiMilitaryAmbulance;
         }
         return null;
     };
+    const updateAuthScore = () => {
+        const upvoteCount = c.upvotes;
+        const total = c.upvotes + c.downvotes;
+        setAuthScore((upvoteCount / total) * 100);
+    };
     useEffect(() => {
-        console.log(c, selectedConflictEvent);
-    }, [c, selectedConflictEvent]);
+        user && selectedConflictEvent && loadConflictEventComments();
+        c && updateAuthScore();
+    }, [c, user, selectedConflictEvent]);
 
-    const user = useSelector((state) => state.account.user);
     const handleCommentClick = () => {
         if (user) {
             dispatch(setSideBarState("COMMENT"));
@@ -108,20 +141,50 @@ const ConflictEvent = ({ c }) => {
             dispatch(toggleShowSignIn());
         }
     };
-    const handleUpvote = () => {
+    const handleUpvote = async () => {
         if (user) {
+            if (!isUpvoted) {
+                await upvote();
+                setIsUpvoted(true);
+            } else {
+                if (isUpvoted) {
+                    await resetUpvote();
+                    setIsUpvoted(null);
+                }
+            }
+            if (isDownvoted) {
+                resetDownvote();
+                setIsDownvoted(null);
+            }
             // dispatch(setSideBarState("COMMENT"));
         } else {
             dispatch(toggleShowSignIn());
         }
     };
-    const handleDownvote = () => {
+
+    const handleDownvote = async () => {
         if (user) {
-            // dispatch(setSideBarState("COMMENT"));
+            if (!isDownvoted) {
+                await downvote();
+                setIsDownvoted(true);
+            } else {
+                if (isDownvoted) {
+                    await resetDownvote();
+                    setIsDownvoted(null);
+                }
+            }
+            if (isUpvoted) {
+                setIsUpvoted(null);
+                resetUpvote();
+            }
         } else {
             dispatch(toggleShowSignIn());
         }
     };
+
+    const selectedComments = useSelector(
+        (state) => state.conflict.selectedComments
+    );
     return (
         <Box
             shadow={"sm"}
@@ -165,7 +228,7 @@ const ConflictEvent = ({ c }) => {
                         flex={1}
                         spacing={1}
                     >
-                        <Heading size={"sm"} color={"white"} noOfLines={1}>
+                        <Heading size={"sm"} color={"white"} noOfLines={2}>
                             {c.title}
                         </Heading>
 
@@ -173,54 +236,59 @@ const ConflictEvent = ({ c }) => {
                             {c.description}
                         </Text>
                     </VStack>
-                    <VStack spacing={0}>
-                        <IconButton
-                            variant={"ghost"}
-                            color={"whiteAlpha.500"}
-                            onClick={handleUpvote}
-                            icon={
-                                <Icon
-                                    boxSize={"24px"}
-                                    as={
-                                        isUpvoted && isUpvoted === true
-                                            ? PiArrowCircleUpFill
-                                            : PiArrowCircleUp
+                    {user &&
+                        selectedConflictEvent &&
+                        selectedConflictEvent.id === c.id && (
+                            <VStack spacing={0}>
+                                <IconButton
+                                    variant={"ghost"}
+                                    color={"whiteAlpha.500"}
+                                    onClick={handleUpvote}
+                                    icon={
+                                        <Icon
+                                            boxSize={"24px"}
+                                            as={
+                                                isUpvoted && isUpvoted === true
+                                                    ? PiArrowCircleUpFill
+                                                    : PiArrowCircleUp
+                                            }
+                                        />
                                     }
+                                    borderBottomRadius={0}
+                                    _hover={{
+                                        bg: "whiteAlpha.100",
+                                        color: "whiteAlpha.900",
+                                    }}
                                 />
-                            }
-                            borderBottomRadius={0}
-                            _hover={{
-                                bg: "whiteAlpha.100",
-                                color: "whiteAlpha.900",
-                            }}
-                        />
-                        <IconButton
-                            variant={"ghost"}
-                            color={"whiteAlpha.500"}
-                            onClick={handleDownvote}
-                            icon={
-                                <Icon
-                                    boxSize={"24px"}
-                                    as={
-                                        isUpvoted && isUpvoted === false
-                                            ? PiArrowCircleDownFill
-                                            : PiArrowCircleDown
+                                <IconButton
+                                    variant={"ghost"}
+                                    color={"whiteAlpha.500"}
+                                    onClick={handleDownvote}
+                                    icon={
+                                        <Icon
+                                            boxSize={"24px"}
+                                            as={
+                                                isDownvoted &&
+                                                isDownvoted === true
+                                                    ? PiArrowCircleDownFill
+                                                    : PiArrowCircleDown
+                                            }
+                                        />
                                     }
+                                    borderTopRadius={0}
+                                    _hover={{
+                                        bg: "whiteAlpha.100",
+                                        color: "whiteAlpha.900",
+                                    }}
                                 />
-                            }
-                            borderTopRadius={0}
-                            _hover={{
-                                bg: "whiteAlpha.100",
-                                color: "whiteAlpha.900",
-                            }}
-                        />
-                    </VStack>
+                            </VStack>
+                        )}
                 </HStack>
             </VStack>
             <Collapse
                 in={selectedConflictEvent && selectedConflictEvent.id === c.id}
             >
-                <Box w={"full"} alignItems={"flex-start"} mb={2}>
+                <Box w={"full"} alignItems={"flex-start"} mb={2} mt={2}>
                     <HStack alignItems={"center"} spacing={1} mb={2}>
                         <Icon
                             as={MdDoneAll}
@@ -236,7 +304,7 @@ const ConflictEvent = ({ c }) => {
                         size={"sm"}
                         w={"full"}
                         colorScheme={"whiteAlpha"}
-                        value={30}
+                        value={authScore}
                         backgroundColor={"whiteAlpha.100"}
                     />
                 </Box>
@@ -251,7 +319,7 @@ const ConflictEvent = ({ c }) => {
                         _hover={{ bg: "whiteAlpha.100", color: "white" }}
                         borderRightRadius={0}
                     >
-                        Comment
+                        Comment {user && `(${selectedComments?.length})`}
                     </Button>
                     <Button
                         borderLeftRadius={0}

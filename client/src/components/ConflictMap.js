@@ -1,12 +1,12 @@
 import Map from "./Map/Map";
 import { DEFAULT_CENTER } from "../pages";
 import { useDispatch, useSelector } from "react-redux";
-import { Center } from "@chakra-ui/layout";
+import { Center, Box, HStack } from "@chakra-ui/layout";
 import { Spinner } from "@chakra-ui/spinner";
 import { useEffect } from "react";
 import { ReportModal } from "./ReportModal";
 import ReactDOMServer from "react-dom/server";
-import { MdMemory } from "react-icons/md";
+import { MdAdd, MdLocationSearching, MdMemory, MdRemove } from "react-icons/md";
 import { icons } from "react-icons";
 import {
     GiJetFighter,
@@ -14,9 +14,14 @@ import {
     GiPublicSpeaker,
 } from "react-icons/gi";
 
-import { setSelectedConflictEvent } from "src/redux/slices/conflictSlice";
+import {
+    setMapReset,
+    setSelectedConflictEvent,
+} from "src/redux/slices/conflictSlice";
+import { Icon, IconButton } from "@chakra-ui/react";
 
 export const ConflictMap = () => {
+    const dispatch = useDispatch();
     const selectedConflict = useSelector(
         (state) => state.conflict.selectedConflict
     );
@@ -30,14 +35,10 @@ export const ConflictMap = () => {
     const providerAttr =
         '&copy; <a href="https://www.stadiamaps.com/" target="_blank">Stadia Maps</a> &copy; <a href="https://openmaptiles.org/" target="_blank">OpenMapTiles</a> &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
 
-    useEffect(() => {
-        console.log(conflictEvents);
-        console.log(ReactDOMServer.renderToString(<MdMemory />));
-    }, [conflictEvents]);
+    useEffect(() => {}, [conflictEvents]);
     const getMarkerIcon = (ceName) => {
         let iconSvg;
 
-        console.log(ceName);
         switch (ceName) {
             case "Airstrike/Bombing":
                 iconSvg = GiJetFighter;
@@ -49,14 +50,14 @@ export const ConflictMap = () => {
                 iconSvg = GiPublicSpeaker;
                 break;
         }
-        console.log(iconSvg);
+
         return L.divIcon({
             html: ReactDOMServer.renderToString(iconSvg),
             iconSize: [30, 30],
         });
     };
     return selectedConflict && selectedConflict.name ? (
-        <>
+        <Box flex={1} h={"full"} pos={"relative"}>
             <ReportModal />
             <Map
                 key={JSON.stringify([
@@ -66,7 +67,6 @@ export const ConflictMap = () => {
                 style={{ width: "100%", height: "100%", zIndex: 1 }}
                 center={[selectedConflict.latitude, selectedConflict.longitude]}
                 zoom={selectedConflict.defaultZoom}
-                onClick={(e) => console.log(e)}
             >
                 {({ TileLayer, Marker, Popup }) => (
                     <>
@@ -78,7 +78,14 @@ export const ConflictMap = () => {
                     </>
                 )}
             </Map>
-        </>
+            <HStack position={"absolute"} zIndex={999} bottom={2} left={2}>
+                <IconButton
+                    size={"sm"}
+                    icon={<Icon as={MdLocationSearching} />}
+                    onClick={() => dispatch(setMapReset())}
+                />
+            </HStack>
+        </Box>
     ) : (
         <Loading />
     );

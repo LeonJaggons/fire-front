@@ -4,6 +4,7 @@ import * as ReactLeaflet from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import { useDispatch, useSelector } from "react-redux";
 import {
+    setMapSearching,
     setReportLocation,
     setSelectedConflictEvent,
     toggleClickToReportMode,
@@ -55,7 +56,6 @@ const Map = ({ children, className, width, height, ...rest }) => {
         );
         const map = ReactLeaflet.useMap();
         useEffect(() => {
-            console.log(selectedConflictEvent);
             !reportLocation &&
                 selectedConflictEvent &&
                 map &&
@@ -94,23 +94,42 @@ const Map = ({ children, className, width, height, ...rest }) => {
     };
     const ConflictMarker = ({ ce }) => {
         const dispatch = useDispatch();
-        ReactLeaflet.useMapEvents({
-            click(e) {
-                const conflictEvent = find(
-                    conflictEvents,
-                    (o) =>
-                        o.latitude === ce.latitude &&
-                        o.longitude === ce.longitude
-                );
-                dispatch(setSelectedConflictEvent(conflictEvent));
-            },
-        });
+        const map = ReactLeaflet.useMap();
+        // ReactLeaflet.useMapEvents({
+        //     click(e) {
+        //     },
+        // });
         return (
             <ReactLeaflet.Marker
                 // icon={getMarkerIcon(ce.conflictEventType.name)}
                 position={[ce.latitude, ce.longitude]}
+                eventHandlers={{
+                    click: (e) => {
+                        dispatch(setMapSearching());
+                        dispatch(setSelectedConflictEvent(ce));
+                    },
+                }}
             ></ReactLeaflet.Marker>
         );
+    };
+
+    const ResetMap = () => {
+        const dispatch = useDispatch();
+        const mapMode = useSelector((state) => state.conflict.mapMode);
+        const selectedConflict = useSelector(
+            (state) => state.conflict.selectedConflict
+        );
+        const map = ReactLeaflet.useMap();
+        useEffect(() => {
+            if (mapMode === "RESET") {
+                map.flyTo(
+                    [selectedConflict.latitude, selectedConflict.longitude],
+                    selectedConflict.defaultZoom
+                );
+                dispatch(setMapSearching());
+            }
+        }, [mapMode]);
+        return null;
     };
     return (
         <MapContainer {...rest}>
@@ -121,6 +140,7 @@ const Map = ({ children, className, width, height, ...rest }) => {
                 <ConflictMarker ce={ce} />
             ))}
             <ReportMarker />
+            <ResetMap />
         </MapContainer>
     );
 };

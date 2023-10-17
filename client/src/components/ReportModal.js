@@ -25,6 +25,7 @@ import {
     updateNewConflictEventTypeId,
 } from "src/redux/slices/conflictSlice";
 import { publishConflictEvent } from "src/services/conflictService";
+import DatePicker from "react-datepicker";
 
 export const ReportModal = () => {
     const dispatch = useDispatch();
@@ -56,11 +57,12 @@ export const ReportModal = () => {
 
 const ReportForm = () => {
     const [loading, setLoading] = useState(false);
+    const [date, setDate] = useState(new Date());
 
     const handlePostReport = async () => {
         setLoading(true);
 
-        await publishConflictEvent();
+        await publishConflictEvent(date);
         setLoading(false);
     };
     return (
@@ -78,7 +80,22 @@ const ReportForm = () => {
                     Omnis aut tempora dicta. Ea at enim fugiat vero id rem.
                 </Text>
             </Box>
-            <VStack w={"full"} alignItems={"flex-start"} spacing={4} p={6}>
+            <VStack
+                overflowY={"scroll"}
+                maxH={"60vh"}
+                w={"full"}
+                alignItems={"flex-start"}
+                spacing={4}
+                p={6}
+            >
+                <VStack w={"full"} align={"flex-start"}>
+                    <Text>Date</Text>
+                    <Input
+                        as={DatePicker}
+                        selected={date}
+                        onChange={(d) => setDate(d)}
+                    />
+                </VStack>
                 <ConflictEventTypeSelect />
                 <ConflictLocationDisplay />
                 <ReportFormInput label={"Title"} />

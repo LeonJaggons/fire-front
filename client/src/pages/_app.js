@@ -1,25 +1,20 @@
+import "react-datepicker/dist/react-datepicker.css";
 import "../firebase/firebase-init";
 import { Link } from "@chakra-ui/next-js";
 import {
+    Avatar,
     Box,
     Button,
     ChakraProvider,
     Collapse,
     Divider,
     HStack,
-    Heading,
     Icon,
-    Input,
-    Modal,
-    ModalBody,
-    ModalContent,
-    ModalOverlay,
     Popover,
     PopoverBody,
     PopoverContent,
     PopoverTrigger,
     Select,
-    Text,
     VStack,
     useDisclosure,
 } from "@chakra-ui/react";
@@ -30,7 +25,12 @@ import {
 } from "react-redux";
 
 import { MdCampaign, MdLogin, MdSpeaker } from "react-icons/md";
-import { GiAwareness, GiConfrontation, GiWalkieTalkie } from "react-icons/gi";
+import {
+    GiAwareness,
+    GiCloakDagger,
+    GiConfrontation,
+    GiWalkieTalkie,
+} from "react-icons/gi";
 import "@styles/globals.scss";
 import NextLink from "next/link";
 import { store } from "src/redux/store";
@@ -41,13 +41,17 @@ import {
     streamConflictEvents,
 } from "src/services/conflictService";
 import {
+    setMapReset,
     setSelectedConflict,
     setSelectedConflictEvent,
     toggleClickToReportMode,
 } from "src/redux/slices/conflictSlice";
 import { toggleShowSignIn } from "src/redux/slices/accountSlice";
-import { find } from "lodash";
+import { create, find } from "lodash";
 import { handleClientScriptLoad } from "next/script";
+import { Timestamp, addDoc } from "firebase/firestore";
+import { onAuthStateChanged } from "firebase/auth";
+import { SignInModal } from "./SignInModal";
 
 function MyApp({ Component, pageProps }) {
     return (
@@ -140,6 +144,7 @@ const ConflictSelect = () => {
     const handleClick = (e) => {
         const conflict = find(conflicts, (c) => c.id === e);
 
+        dispatch(setMapReset());
         dispatch(setSelectedConflictEvent(null));
         dispatch(setSelectedConflict(null));
         dispatch(setSelectedConflict(conflict));
@@ -207,7 +212,7 @@ const AppMenu = () => {
         <HStack id={"app-menu"} spacing={8}>
             <ReportButton />
             <AppMenuItem>Map</AppMenuItem>
-            <AppMenuItem>About</AppMenuItem>
+            <AppMenuItem href={"/about"}>About</AppMenuItem>
 
             <SignInButton />
         </HStack>
@@ -231,9 +236,7 @@ const ReportButton = () => {
         }
     };
 
-    useEffect(() => {
-        console.log(clickToReportMode);
-    }, [clickToReportMode]);
+    useEffect(() => {}, [clickToReportMode]);
     return (
         <>
             <Button
@@ -257,95 +260,39 @@ const ReportButton = () => {
     );
 };
 const SignInButton = () => {
+    const user = useSelector((state) => state.account.user);
     const dispatch = useDispatch();
+
     const handleClick = () => {
         dispatch(toggleShowSignIn());
     };
     return (
         <>
-            <Button
-                fontWeight={400}
-                fontSize={"14px"}
-                variant={"link"}
-                color={"gray.400"}
-                p={0}
-                _hover={{ color: "white" }}
-                iconSpacing={2}
-                onClick={handleClick}
-                rightIcon={<Icon as={MdLogin} />}
-            >
-                Sign In
-            </Button>
+            {user ? (
+                <Avatar
+                    name={`${user.firstName} ${user.lastName}`}
+                    size={"sm"}
+                />
+            ) : (
+                <Button
+                    fontWeight={400}
+                    fontSize={"14px"}
+                    variant={"link"}
+                    color={"gray.400"}
+                    p={0}
+                    _hover={{ color: "white" }}
+                    iconSpacing={2}
+                    onClick={handleClick}
+                    rightIcon={<Icon as={MdLogin} />}
+                >
+                    Sign In
+                </Button>
+            )}
             <SignInModal />
         </>
     );
 };
 
-const SignInModal = () => {
-    const showSignIn = useSelector((state) => state.account.showSignIn);
-
-    const dispatch = useDispatch();
-    const handleClose = () => {
-        dispatch(toggleShowSignIn());
-    };
-    return (
-        <Modal isOpen={showSignIn} onClose={handleClose} isCentered>
-            <ModalOverlay></ModalOverlay>
-            <ModalContent>
-                <ModalBody p={0}>
-                    <Box
-                        p={6}
-                        py={4}
-                        borderBottom={"1px solid rgba(0,0,0,.2)"}
-                        bg={"black"}
-                    >
-                        <Heading size={"lg"} color={"white"}>
-                            Sign In
-                        </Heading>
-                    </Box>
-
-                    <Box p={6}>
-                        <VStack w={"full"}>
-                            <Box w={"full"}>
-                                <Text mb={1}>Username</Text>
-                                <Input />
-                            </Box>
-                            <Box w={"full"}>
-                                <Text mb={1}>Password</Text>
-                                <Input />
-                            </Box>
-                        </VStack>
-                    </Box>
-                    <Box p={6} py={4} borderTop={"1px solid rgba(0,0,0,.2)"}>
-                        <VStack w={"full"} spacing={4}>
-                            <Button
-                                w={"full"}
-                                bg={"black"}
-                                colorScheme="blackAlpha"
-                                size={"lg"}
-                                // onClick={handlePostReport}
-                                // isLoading={loading}
-                            >
-                                Continue
-                            </Button>
-                            {/* <HStack spacing={2} align={"center"} w={"full"}>
-                                <Divider flex={1}></Divider>
-                                <Text fontSize={10} color={"gray.400"}>
-                                    OR
-                                </Text>
-                                <Divider flex={1}></Divider>
-                            </HStack> */}
-
-                            <Button variant={"link"} color={"black"}>
-                                Dont have an account? Sign up
-                            </Button>
-                        </VStack>
-                    </Box>
-                </ModalBody>
-            </ModalContent>
-        </Modal>
-    );
-};
 const AppMenuItem = ({ children, href }) => {
     return (
         <Link
