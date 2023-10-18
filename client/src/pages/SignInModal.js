@@ -195,6 +195,7 @@ const SignInForm = () => {
         ).catch((err) => {
             console.log(err);
         });
+        if(!)
         const userDocRef = doc(fireStore, "user", userCred.user.uid);
         const userDoc = await getDoc(userDocRef);
         dispatch(
