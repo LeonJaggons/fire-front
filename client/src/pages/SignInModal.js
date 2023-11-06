@@ -9,6 +9,7 @@ import {
     ModalOverlay,
     Text,
     VStack,
+    useToast,
 } from "@chakra-ui/react";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from "react";
@@ -179,6 +180,7 @@ const SignUpForm = () => {
 };
 const SignInForm = () => {
     const dispatch = useDispatch();
+    const toast = useToast();
     const [loading, setLoading] = useState(false);
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
@@ -188,14 +190,25 @@ const SignInForm = () => {
 
     const handleSignIn = async () => {
         setLoading(true);
+        let signInError;
         const userCred = await signInWithEmailAndPassword(
             fireAuth,
             username,
             password
         ).catch((err) => {
-            console.log(err);
+            signInError = err;
         });
-        if(!)
+        if (!userCred) {
+            console.log(Object.keys(signInError));
+            toast({
+                title: "Login Error",
+                description: `${signInError.code}`,
+                status: "error",
+                duration: 5000,
+                isClosable: true,
+            });
+            return;
+        }
         const userDocRef = doc(fireStore, "user", userCred.user.uid);
         const userDoc = await getDoc(userDocRef);
         dispatch(
