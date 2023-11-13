@@ -4,24 +4,15 @@ import { ConflictMap } from "../components/ConflictMap";
 import { useDispatch, useSelector } from "react-redux";
 import { Alert } from "@chakra-ui/alert";
 import { Collapse, SlideFade } from "@chakra-ui/transition";
-import { Box, HStack, Heading, Text, VStack } from "@chakra-ui/layout";
+import { Center, Box, HStack, Heading, Text, VStack } from "@chakra-ui/layout";
 import { Icon } from "@chakra-ui/icon";
-import {
-    MdArrowUpward,
-    MdCampaign,
-    MdChevronLeft,
-    MdOutlineArrowDownward,
-    MdOutlineArrowUpward,
-    MdSend,
-} from "react-icons/md";
+import { MdCampaign, MdChevronLeft, MdSend } from "react-icons/md";
 import { Button, IconButton } from "@chakra-ui/button";
 import {
     setSideBarState,
     toggleClickToReportMode,
 } from "src/redux/slices/conflictSlice";
-import { Tag } from "@chakra-ui/tag";
 import { ConflictList } from "../components/ConflictList";
-import { Tabs } from "@chakra-ui/tabs";
 import moment from "moment";
 import { Input } from "@chakra-ui/input";
 import { onAuthStateChanged } from "firebase/auth";
@@ -73,7 +64,7 @@ const ConflictComments = () => {
         console.log("CMMENTS", selectedComments);
     }, [selectedComments]);
     return (
-        <VStack flex={1} h={"full"} w={"24vw"} spacing={0}>
+        <VStack flex={1} h={"full"} spacing={0} w={"full"}>
             <VStack flex={1} p={4} w={"full"} alignItems={"flex-start"}>
                 {selectedComments?.map((c) => {
                     return (
@@ -84,11 +75,12 @@ const ConflictComments = () => {
                                     size={"xs"}
                                     fontWeight={500}
                                     fontSize={12}
+                                    mb={1}
                                     color={"whiteAlpha.600"}
                                 >
                                     {c.userName}
                                 </Heading>
-                                <Text color={"white"} fontSize={12}>
+                                <Text color={"white"} fontSize={14}>
                                     {c.content}
                                 </Text>
                             </Box>
@@ -97,7 +89,9 @@ const ConflictComments = () => {
                 })}
                 {!selectedComments ||
                     (selectedComments && selectedComments.length === 0 && (
-                        <Heading>Comments</Heading>
+                        <Center>
+                            <Heading>No comments</Heading>
+                        </Center>
                     ))}
             </VStack>
 
@@ -116,6 +110,7 @@ const ConflictComments = () => {
                         icon={<Icon as={MdSend} color={"red.500"} />}
                         variant={"ghost"}
                         onClick={handlePublish}
+                        isDisabled={!content || content.trim() === ""}
                     />
                 </HStack>
             </Box>
@@ -158,7 +153,7 @@ const ConflictSideBar = () => {
     }, []);
     return (
         <VStack
-            minW={"20vw"}
+            minW={"320px"}
             maxW={"25vw"}
             h={"full"}
             bg={"rgb(17,19,21)"}
@@ -213,7 +208,9 @@ const ConflictSideBar = () => {
                 hidden={sideBarState !== "CONFLICT"}
                 style={{ flex: 1 }}
             >
-                <ConflictList />
+                <Box minW={"320px"} maxW={"25vw"}>
+                    <ConflictList />
+                </Box>
             </SlideFade>
             <SlideFade
                 h={"full"}
@@ -221,6 +218,7 @@ const ConflictSideBar = () => {
                 in={sideBarState === "COMMENT"}
                 hidden={sideBarState !== "COMMENT"}
                 style={{ flex: 1 }}
+                w={"full"}
             >
                 <ConflictComments />
             </SlideFade>
@@ -252,7 +250,7 @@ const ClickToReportAlert = () => {
 
                         <Text color={"white"} fontSize={"sm"}>
                             Click anywhere on the map to report an event for the{" "}
-                            {selectedConflict?.name}.
+                            {selectedConflict?.name} conflict.
                         </Text>
                     </HStack>
                     <Button

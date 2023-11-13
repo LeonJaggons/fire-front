@@ -49,7 +49,7 @@ export const SignInModal = () => {
     return (
         <Modal isOpen={showSignIn} onClose={handleClose} isCentered>
             <ModalOverlay></ModalOverlay>
-            <ModalContent>
+            <ModalContent borderRadius={0}>
                 <ModalBody p={0}>
                     <Box
                         p={6}

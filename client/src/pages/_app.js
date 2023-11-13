@@ -9,6 +9,7 @@ import {
     Collapse,
     Divider,
     HStack,
+    Heading,
     Icon,
     Popover,
     PopoverBody,
@@ -118,16 +119,26 @@ const AppHeader = () => {
                 shadow={"md"}
                 h={"64px"}
                 spacing={"12px"}
+                justify={"space-between"}
                 bg={"rgb(17,19,21)"}
                 color={"white"}
             >
                 {/* <Heading size={"md"}`o>{appName}</Heading> */}
 
                 <HStack>
-                    <Icon as={GiConfrontation} boxSize={"30px"} />
+                    <Icon as={GiConfrontation} boxSize={"24px"} />
+                    <Heading
+                        fontSize={"24px"}
+                        letterSpacing={-1}
+                        fontWeight={700}
+                    >
+                        FireFront
+                    </Heading>
+                </HStack>
+                <HStack>
                     <ConflictSelect />
                 </HStack>
-                <Box flex={1} />
+                {/* <Box flex={1} /> */}
                 <AppMenu />
             </HStack>
         </Collapse>
@@ -154,13 +165,16 @@ const ConflictSelect = () => {
         conflicts && dispatch(setSelectedConflict(conflicts[0]));
     }, [conflicts]);
     return (
-        <Popover zIndex={999} placement={"bottom-start"}>
+        <Popover zIndex={999} placement={"bottom"}>
             <PopoverTrigger>
                 <Button
                     variant={"ghost"}
                     color={"white"}
-                    fontSize={"24px"}
+                    fontSize={"30px"}
                     _hover={{ bg: "whiteAlpha.100" }}
+                    px={1}
+                    fontWeight={800}
+                    letterSpacing={-1}
                 >
                     {selectedConflict?.name}
                 </Button>
@@ -171,6 +185,7 @@ const ConflictSelect = () => {
                 shadow={"none"}
                 borderRadius={5}
                 overflow={"hidden"}
+                top={1}
             >
                 <PopoverBody bg={"rgb(36,38,39)"}>
                     <VStack w={"full"} spacing={2}>
@@ -179,8 +194,9 @@ const ConflictSelect = () => {
                                 variant={"ghost"}
                                 colorScheme={"whiteAlpha"}
                                 fontSize={"20px"}
-                                justifyContent={"flex-start"}
+                                justifyContent={"center"}
                                 color={"whiteAlpha.900"}
+                                letterSpacing={-1}
                                 onClick={() => handleClick(c.id)}
                                 w={"full"}
                             >

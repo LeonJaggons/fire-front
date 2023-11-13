@@ -1,6 +1,7 @@
 import {
     Box,
     Button,
+    Center,
     Divider,
     HStack,
     Heading,
@@ -26,6 +27,7 @@ import {
 } from "src/redux/slices/conflictSlice";
 import { publishConflictEvent } from "src/services/conflictService";
 import DatePicker from "react-datepicker";
+import moment from "moment";
 
 export const ReportModal = () => {
     const dispatch = useDispatch();
@@ -46,7 +48,7 @@ export const ReportModal = () => {
     return (
         <Modal size={"xl"} isOpen={isOpen} onClose={handleClose} isCentered>
             <ModalOverlay />
-            <ModalContent>
+            <ModalContent borderRadius={0}>
                 <ModalBody p={0}>
                     <ReportForm />
                 </ModalBody>
@@ -88,14 +90,30 @@ const ReportForm = () => {
                 spacing={4}
                 p={6}
             >
-                <VStack w={"full"} align={"flex-start"}>
-                    <Text>Date</Text>
-                    <Input
-                        as={DatePicker}
-                        selected={date}
-                        onChange={(d) => setDate(d)}
-                    />
-                </VStack>
+                <HStack w="full">
+                    <Box flex={1}>
+                        <Text>Date</Text>
+                        <HStack spacing={0} h={"40px"}>
+                            <Input
+                                w={"180px"}
+                                as={DatePicker}
+                                selected={date}
+                                onChange={(d) => {
+                                    if (
+                                        moment(d).isSameOrBefore(
+                                            moment(),
+                                            "day"
+                                        )
+                                    )
+                                        setDate(d);
+                                    else setDate(new Date());
+                                }}
+                                style={{ width: "100%" }}
+                                dateFormat={"MMMM d, yyyy"}
+                            />
+                        </HStack>
+                    </Box>
+                </HStack>
                 <ConflictEventTypeSelect />
                 <ConflictLocationDisplay />
                 <ReportFormInput label={"Title"} />
