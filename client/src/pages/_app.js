@@ -98,9 +98,6 @@ const AppContainer = ({ children }) => {
             unsub && unsub();
         };
     }, [selectedConflict]);
-    useEffect(() => {
-        console.log(conflictEvents);
-    }, [conflictEvents]);
     return <Box id={"app-container"}>{children}</Box>;
 };
 const AppContent = ({ children }) => {

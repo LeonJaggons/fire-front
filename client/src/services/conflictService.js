@@ -173,7 +173,6 @@ export const loadConflictEventComments = async () => {
     const selectedConflictEvent =
         store.getState().conflict.selectedConflictEvent;
     const commentCollection = collection(fireStore, "comment");
-    console.log(selectedConflictEvent);
     const commentQry = query(
         commentCollection,
         where("conflictEventId", "==", selectedConflictEvent.id),
@@ -195,7 +194,6 @@ export const loadConflictEventComments = async () => {
             createdDate: dc.data().createdDate.toDate(),
         };
     });
-    console.log(comments);
     store.dispatch(setSelectedComments(comments));
 };
 export const publishComment = async (content) => {

@@ -107,7 +107,6 @@ const ConflictEvent = ({ c }) => {
     };
 
     useEffect(() => {
-        console.log(user);
         if (!user) {
             setIsUpvoted(null);
         } else {
@@ -212,7 +211,7 @@ const ConflictEvent = ({ c }) => {
 
     function getRootDomain(url) {
         if (url == null || url.trim() === "") return "";
-        console.log(url);
+
         const domain = new URL(url).hostname;
         const domainParts = domain.split(".").reverse();
         const rootDomain = domainParts[1] + "." + domainParts[0];

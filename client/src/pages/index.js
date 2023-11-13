@@ -60,9 +60,6 @@ const ConflictComments = () => {
         setContent("");
         await loadConflictEventComments();
     };
-    useEffect(() => {
-        console.log("CMMENTS", selectedComments);
-    }, [selectedComments]);
     return (
         <VStack flex={1} h={"full"} spacing={0} w={"full"}>
             <VStack flex={1} p={4} w={"full"} alignItems={"flex-start"}>

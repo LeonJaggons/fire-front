@@ -199,7 +199,6 @@ const SignInForm = () => {
             signInError = err;
         });
         if (!userCred) {
-            console.log(Object.keys(signInError));
             toast({
                 title: "Login Error",
                 description: `${signInError.code}`,
