@@ -52,7 +52,7 @@ import { create, find } from "lodash";
 import { handleClientScriptLoad } from "next/script";
 import { Timestamp, addDoc } from "firebase/firestore";
 import { onAuthStateChanged } from "firebase/auth";
-import { SignInModal } from "./SignInModal";
+import { SignInModal } from "../components/SignInModal";
 
 function MyApp({ Component, pageProps }) {
     return (
@@ -167,10 +167,10 @@ const ConflictSelect = () => {
                 <Button
                     variant={"ghost"}
                     color={"white"}
-                    fontSize={"30px"}
+                    fontSize={"24px"}
                     _hover={{ bg: "whiteAlpha.100" }}
                     px={1}
-                    fontWeight={800}
+                    fontWeight={700}
                     letterSpacing={-1}
                 >
                     {selectedConflict?.name}
@@ -224,8 +224,9 @@ const AppMenu = () => {
     return (
         <HStack id={"app-menu"} spacing={8}>
             <ReportButton />
-            <AppMenuItem>Map</AppMenuItem>
+            <AppMenuItem href={"/"}>Map</AppMenuItem>
             <AppMenuItem href={"/about"}>About</AppMenuItem>
+            <AppMenuItem href={"/about"}>Donate</AppMenuItem>
 
             <SignInButton />
         </HStack>

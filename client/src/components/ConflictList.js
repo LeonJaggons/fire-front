@@ -452,7 +452,20 @@ const ConflictEvent = ({ c }) => {
                         color={"whiteAlpha.900"}
                         w={"full"}
                     >
-                        <Heading size={"lg"}>{c.title}</Heading>
+                        <HStack>
+                            <Icon
+                                mr={2}
+                                boxSize={"36px"}
+                                as={getFFIcon(c.conflictEventType.name)}
+                            />
+                            <Box>
+                                <Heading fontSize={"26px"}>{c.title}</Heading>
+                                <Text color={"whiteAlpha.700"}>
+                                    {c.createdDate &&
+                                        timeSince(c.createdDate.toDate())}
+                                </Text>
+                            </Box>
+                        </HStack>
                     </Box>
                     <ModalBody p={6} borderRadius={0}>
                         <Box>
