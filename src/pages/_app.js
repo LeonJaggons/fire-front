@@ -25,10 +25,11 @@ import {
     useSelector,
 } from "react-redux";
 
-import { MdCampaign, MdLogin, MdSpeaker } from "react-icons/md";
+import { MdCampaign, MdExpandMore, MdLogin, MdSpeaker } from "react-icons/md";
 import {
     GiAwareness,
     GiCloakDagger,
+    GiCompass,
     GiConfrontation,
     GiWalkieTalkie,
 } from "react-icons/gi";
@@ -165,11 +166,13 @@ const ConflictSelect = () => {
         <Popover zIndex={999} placement={"bottom"}>
             <PopoverTrigger>
                 <Button
+                    leftIcon={<Icon as={GiCompass} />}
+                    rightIcon={<Icon as={MdExpandMore} />}
                     variant={"ghost"}
                     color={"white"}
                     fontSize={"24px"}
                     _hover={{ bg: "whiteAlpha.100" }}
-                    px={1}
+                    px={4}
                     fontWeight={700}
                     letterSpacing={-1}
                 >

@@ -80,9 +80,6 @@ const ReportForm = () => {
         await publishConflictEvent(date, uploadImages);
         setLoading(false);
     };
-    useEffect(() => {
-        console.log(uploadImages);
-    }, [uploadImages]);
     return (
         <Box>
             <Box
@@ -163,8 +160,6 @@ const ConflictImageUpload = ({ setUploadImages }) => {
             });
             setImages([...images, ...newImages]);
         }
-
-        // console.log(e.target.files);
     };
     useEffect(() => {
         setUploadImages(images);
@@ -207,6 +202,9 @@ const ConflictEventTypeSelect = () => {
     const handleChange = (e) => {
         dispatch(updateNewConflictEventTypeId(e.target.value));
     };
+    useEffect(() => {
+        dispatch(updateNewConflictEventTypeId(conflictEventTypes[0].id));
+    }, [conflictEventTypes]);
     return (
         <VStack w={"full"} alignItems={"flex-start"} spacing={1}>
             <Text>Event Type</Text>

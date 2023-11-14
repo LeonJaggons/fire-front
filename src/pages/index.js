@@ -6,7 +6,16 @@ import { Alert } from "@chakra-ui/alert";
 import { Collapse, SlideFade } from "@chakra-ui/transition";
 import { Center, Box, HStack, Heading, Text, VStack } from "@chakra-ui/layout";
 import { Icon } from "@chakra-ui/icon";
-import { MdCampaign, MdChevronLeft, MdSend } from "react-icons/md";
+import {
+    MdCampaign,
+    MdChevronLeft,
+    MdFilter,
+    MdFilterAlt,
+    MdSchedule,
+    MdSend,
+    MdSort,
+    MdTimelapse,
+} from "react-icons/md";
 import { Button, IconButton } from "@chakra-ui/button";
 import {
     setSideBarState,
@@ -130,24 +139,25 @@ const ConflictSideBar = () => {
                 return <></>;
         }
     };
-    useEffect(() => {
-        const unsub = onAuthStateChanged(
-            fireAuth,
-            (user) => {
-                if (user) {
-                    console.log("USER", user);
-                } else {
-                    console.log("NOTHING");
-                }
-            },
-            (err) => {
-                console.log(err);
-            }
-        );
-        return () => {
-            unsub();
-        };
-    }, []);
+    // useEffect(() => {
+
+    //     const unsub = onAuthStateChanged(
+    //         fireAuth,
+    //         (user) => {
+    //             if (user) {
+    //                 console.log("USER", user);
+    //             } else {
+    //                 console.log("NOTHING");
+    //             }
+    //         },
+    //         (err) => {
+    //             console.log(err);
+    //         }
+    //     );
+    //     return () => {
+    //         unsub();
+    //     };
+    // }, []);
     return (
         <VStack
             minW={"320px"}
@@ -164,39 +174,57 @@ const ConflictSideBar = () => {
                 w={"full"}
                 color={"white"}
             >
-                <VStack
-                    spacing={0}
-                    justify={"space-between"}
-                    alignItems={"flex-start"}
-                >
-                    {sideBarState === "COMMENT" && (
-                        <Button
-                            variant={"whiteAlpha.400"}
-                            color={"white"}
-                            w={"auto"}
-                            h={"auto"}
-                            onClick={handleBack}
-                            p={0}
-                            fontWeight={400}
-                            fontSize={"12px"}
-                            mb={1}
-                            leftIcon={<Icon as={MdChevronLeft} />}
-                            iconSpacing={"2px"}
+                <HStack justify={"space-between"}>
+                    <Box>
+                        <VStack
+                            spacing={0}
+                            justify={"space-between"}
+                            alignItems={"flex-start"}
                         >
-                            Back to Events
-                        </Button>
-                    )}
-                    <Heading size={"md"} color={"white"} mb={1}>
-                        {sideBarState === "CONFLICT"
-                            ? "Conflict Events"
-                            : "Comments"}
-                    </Heading>
-                </VStack>
-                {sideBarState === "CONFLICT" && (
-                    <Text fontSize={10}>
-                        Last updated {moment().format("MMMM D, YYYY h:mma")}
-                    </Text>
-                )}
+                            {sideBarState === "COMMENT" && (
+                                <Button
+                                    variant={"whiteAlpha.400"}
+                                    color={"white"}
+                                    w={"auto"}
+                                    h={"auto"}
+                                    onClick={handleBack}
+                                    p={0}
+                                    fontWeight={400}
+                                    fontSize={"12px"}
+                                    mb={1}
+                                    leftIcon={<Icon as={MdChevronLeft} />}
+                                    iconSpacing={"2px"}
+                                >
+                                    Back to Events
+                                </Button>
+                            )}
+                            <Heading size={"md"} color={"white"} mb={1}>
+                                {sideBarState === "CONFLICT"
+                                    ? "Conflict Events"
+                                    : "Comments"}
+                            </Heading>
+                        </VStack>
+                        {sideBarState === "CONFLICT" && (
+                            <Text fontSize={10}>
+                                {/* Last updated{" "} */}
+                                {moment().format("MMMM D, YYYY h:mma")}
+                            </Text>
+                        )}
+                    </Box>
+
+                    <HStack>
+                        <IconButton
+                            color={"white"}
+                            variant={"link"}
+                            icon={<Icon as={MdSchedule} boxSize={"18px"} />}
+                        />
+                        <IconButton
+                            color={"white"}
+                            variant={"link"}
+                            icon={<Icon as={MdSort} boxSize={"18px"} />}
+                        />
+                    </HStack>
+                </HStack>
             </Box>
             {/* {getSideBarContent(sideBarState)} */}
             <SlideFade

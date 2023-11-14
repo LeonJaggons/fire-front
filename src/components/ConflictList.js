@@ -9,17 +9,7 @@ import {
     VStack,
 } from "@chakra-ui/layout";
 import { Icon } from "@chakra-ui/icon";
-import {
-    MdCampaign,
-    MdCheck,
-    MdClose,
-    MdComment,
-    MdDoneAll,
-    MdFlight,
-    MdLocalFireDepartment,
-    MdMoreVert,
-    MdReport,
-} from "react-icons/md";
+import { MdClose, MdDoneAll, MdMoreVert } from "react-icons/md";
 import {
     PiArrowCircleDown,
     PiArrowCircleDownFill,
@@ -34,18 +24,14 @@ import {
     setSideBarState,
 } from "src/redux/slices/conflictSlice";
 import {
-    GiAk47,
     GiArtilleryShell,
     GiGunshot,
     GiJetFighter,
-    GiMachineGun,
-    GiMachineGunMagazine,
     GiMilitaryAmbulance,
     GiMushroomCloud,
     GiPublicSpeaker,
 } from "react-icons/gi";
 import { Collapse } from "@chakra-ui/transition";
-import moment from "moment/moment";
 import { Progress } from "@chakra-ui/progress";
 import { toggleShowSignIn } from "src/redux/slices/accountSlice";
 import {
@@ -55,7 +41,6 @@ import {
     resetUpvote,
     upvote,
 } from "src/services/conflictService";
-import { times, update } from "lodash";
 import {
     Image,
     Modal,
@@ -63,7 +48,6 @@ import {
     ModalContent,
     ModalOverlay,
 } from "@chakra-ui/react";
-import Iframe from "react-iframe";
 import { Link } from "@chakra-ui/next-js";
 
 export const ConflictList = () => {
