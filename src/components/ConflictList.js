@@ -12,6 +12,7 @@ import { Icon } from "@chakra-ui/icon";
 import {
     MdCampaign,
     MdCheck,
+    MdClose,
     MdComment,
     MdDoneAll,
     MdFlight,
@@ -87,6 +88,7 @@ export const ConflictList = () => {
     );
 };
 const ConflictEvent = ({ c }) => {
+    const [currImage, setCurrImage] = useState(0);
     const [moreOpen, setMoreOpen] = useState(false);
     const user = useSelector((state) => state.account.user);
     const [isUpvoted, setIsUpvoted] = useState();
@@ -253,6 +255,10 @@ const ConflictEvent = ({ c }) => {
 
         return "Just now";
     }
+    const closeMore = () => {
+        setMoreOpen(false);
+        setCurrImage(0);
+    };
     return (
         <>
             <Box
@@ -297,23 +303,17 @@ const ConflictEvent = ({ c }) => {
                             flex={1}
                             spacing={1}
                         >
-                            <HStack>
-                                <Heading
-                                    size={"sm"}
-                                    color={"white"}
-                                    noOfLines={1}
-                                >
-                                    {c.title}
-                                </Heading>
-                            </HStack>
                             <Text
                                 color={"gray.400"}
-                                fontSize={"sm"}
+                                fontSize={"12px"}
                                 noOfLines={1}
                             >
                                 {c.createdDate &&
                                     timeSince(c.createdDate.toDate())}
                             </Text>
+                            <Heading size={"sm"} color={"white"} noOfLines={1}>
+                                {c.title}
+                            </Heading>
                         </VStack>
                         {user &&
                             selectedConflictEvent &&
@@ -439,7 +439,7 @@ const ConflictEvent = ({ c }) => {
             </Box>
             <Modal
                 isOpen={moreOpen}
-                onClose={() => setMoreOpen(false)}
+                onClose={closeMore}
                 size={"2xl"}
                 isCentered
             >
@@ -452,34 +452,85 @@ const ConflictEvent = ({ c }) => {
                         color={"whiteAlpha.900"}
                         w={"full"}
                     >
-                        <HStack>
-                            <Icon
-                                mr={2}
-                                boxSize={"36px"}
-                                as={getFFIcon(c.conflictEventType.name)}
+                        <HStack justify={"space-between"}>
+                            <HStack>
+                                <Icon
+                                    mr={2}
+                                    boxSize={"36px"}
+                                    as={getFFIcon(c.conflictEventType.name)}
+                                />
+                                <Box>
+                                    <Text
+                                        color={"whiteAlpha.700"}
+                                        fontSize={14}
+                                    >
+                                        {c.createdDate &&
+                                            timeSince(c.createdDate.toDate())}
+                                    </Text>
+                                    <Heading fontSize={"26px"}>
+                                        {c.title}
+                                    </Heading>
+                                </Box>
+                            </HStack>
+                            <IconButton
+                                variant={"link"}
+                                color={"whiteAlpha.700"}
+                                icon={<Icon as={MdClose} boxSize={"28px"} />}
+                                _hover={{ color: "white" }}
+                                onClick={closeMore}
                             />
-                            <Box>
-                                <Heading fontSize={"26px"}>{c.title}</Heading>
-                                <Text color={"whiteAlpha.700"}>
-                                    {c.createdDate &&
-                                        timeSince(c.createdDate.toDate())}
-                                </Text>
-                            </Box>
                         </HStack>
                     </Box>
+
+                    {c.imgs && (
+                        <Box w={"full"} position={"relative"}>
+                            <Image src={c.imgs[currImage]} />
+
+                            <HStack
+                                width={"full"}
+                                position={"absolute"}
+                                bottom={2}
+                                alignSelf={"center"}
+                                justify={"center"}
+                            >
+                                <HStack
+                                    bg={"blackAlpha.600"}
+                                    p={2}
+                                    borderRadius={5}
+                                >
+                                    {c.imgs?.map((img, i) => (
+                                        <Image
+                                            borderWidth={
+                                                i === currImage ? 4 : 0
+                                            }
+                                            onMouseDown={() => setCurrImage(i)}
+                                            borderColor={"red.500"}
+                                            borderStyle={"solid"}
+                                            borderRadius={5}
+                                            src={img}
+                                            aspectRatio={1}
+                                            h={"80px"}
+                                            objectFit={"cover"}
+                                        />
+                                    ))}
+                                </HStack>
+                            </HStack>
+                        </Box>
+                    )}
                     <ModalBody p={6} borderRadius={0}>
                         <Box>
                             <VStack spacing={4} alignItems={"start"}>
                                 <Box>
                                     <Link target="_blank" href={c.source}>
                                         <Button
-                                            w={"25%"}
                                             h={"auto"}
                                             p={4}
                                             variant={"ghost"}
                                         >
                                             <Box>
                                                 <Image
+                                                    maxH={"40px"}
+                                                    h={"40px"}
                                                     src={getImageFromSrc(
                                                         c.source
                                                     )}

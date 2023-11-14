@@ -5,18 +5,22 @@ import {
     Divider,
     HStack,
     Heading,
+    Icon,
+    IconButton,
     Input,
     Modal,
     ModalBody,
     ModalContent,
     ModalOverlay,
     Select,
+    SimpleGrid,
     Text,
     Textarea,
     VStack,
+    Image,
 } from "@chakra-ui/react";
 import { useDispatch, useSelector } from "react-redux";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
     clearNewConflict,
     setReportLocation,
@@ -28,6 +32,14 @@ import {
 import { publishConflictEvent } from "src/services/conflictService";
 import DatePicker from "react-datepicker";
 import moment from "moment";
+import {
+    MdAddAPhoto,
+    MdPhone,
+    MdPhoto,
+    MdPhotoAlbum,
+    MdUpload,
+    MdUploadFile,
+} from "react-icons/md";
 
 export const ReportModal = () => {
     const dispatch = useDispatch();
@@ -59,14 +71,18 @@ export const ReportModal = () => {
 
 const ReportForm = () => {
     const [loading, setLoading] = useState(false);
+    const [uploadImages, setUploadImages] = useState([]);
     const [date, setDate] = useState(new Date());
 
     const handlePostReport = async () => {
         setLoading(true);
 
-        await publishConflictEvent(date);
+        await publishConflictEvent(date, uploadImages);
         setLoading(false);
     };
+    useEffect(() => {
+        console.log(uploadImages);
+    }, [uploadImages]);
     return (
         <Box>
             <Box
@@ -78,9 +94,6 @@ const ReportForm = () => {
                 <Heading size={"lg"} color={"white"}>
                     Report an Event
                 </Heading>
-                <Text color={"white"} fontSize={"14px"}>
-                    Omnis aut tempora dicta. Ea at enim fugiat vero id rem.
-                </Text>
             </Box>
             <VStack
                 overflowY={"scroll"}
@@ -90,6 +103,7 @@ const ReportForm = () => {
                 spacing={4}
                 p={6}
             >
+                <ConflictImageUpload setUploadImages={setUploadImages} />
                 <HStack w="full">
                     <Box flex={1}>
                         <Text>Date</Text>
@@ -133,6 +147,56 @@ const ReportForm = () => {
                 </Button>
             </Box>
         </Box>
+    );
+};
+const ConflictImageUpload = ({ setUploadImages }) => {
+    const inputRef = useRef();
+    const [images, setImages] = useState([]);
+
+    const handleChange = (e) => {
+        if (e.target.files) {
+            const newImages = Array.from(e.target.files).map((f) => {
+                return {
+                    name: f.name,
+                    url: URL.createObjectURL(f),
+                };
+            });
+            setImages([...images, ...newImages]);
+        }
+
+        // console.log(e.target.files);
+    };
+    useEffect(() => {
+        setUploadImages(images);
+    }, [images]);
+    return (
+        <>
+            <SimpleGrid columns={3} spacing={1}>
+                {images?.map((img) => (
+                    <Image src={img.url} borderRadius={5} />
+                ))}
+                <Button
+                    p={4}
+                    bg={"gray.100"}
+                    h={"full"}
+                    onClick={() => inputRef?.current?.click()}
+                    fontWeight={400}
+                >
+                    <VStack>
+                        <Icon as={MdAddAPhoto} boxSize={"30px"} />
+                        <Text fontSize={14} color={"blackAlpha.700"}>
+                            Upload images...
+                        </Text>
+                    </VStack>
+                </Button>
+            </SimpleGrid>
+            <Input
+                ref={inputRef}
+                onChange={handleChange}
+                type={"file"}
+                display={"none"}
+            />
+        </>
     );
 };
 const ConflictEventTypeSelect = () => {

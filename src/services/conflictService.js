@@ -14,8 +14,9 @@ import {
     Timestamp,
 } from "@firebase/firestore";
 import axios from "axios";
+import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { find } from "lodash";
-import { fireStore } from "src/firebase/firebase-init";
+import { fireStore, fireStorage } from "src/firebase/firebase-init";
 import {
     setConflictEventTypes,
     setConflictEvents,
@@ -68,7 +69,7 @@ export const loadConflictEventTypes = async () => {
     const conflictEventTypes = await getAllConflictEventTypes();
     store.dispatch(setConflictEventTypes(conflictEventTypes));
 };
-export const publishConflictEvent = async (date) => {
+export const publishConflictEvent = async (date, uploadImages) => {
     const user = store.getState().account.user;
     // const ipAddr = (await axios.get("'https://api.ipify.org?format=json'")).data
     //     .ip;
@@ -88,7 +89,20 @@ export const publishConflictEvent = async (date) => {
         createdDate: Timestamp.now(),
     };
 
-    await addDoc(conflictEventCollection, conflictEvent);
+    const docRef = await addDoc(conflictEventCollection, conflictEvent);
+    const docId = docRef.id;
+    let uploadUrls = [];
+    for (let img of uploadImages) {
+        const storageRef = ref(fireStorage, `images/${docId}/${img.name}`);
+        const imgRes = await fetch(img.url);
+        const imgBlob = await imgRes.blob();
+        const upRef = await uploadBytes(storageRef, imgBlob);
+        const dlURL = await getDownloadURL(upRef.ref);
+        uploadUrls.push(dlURL);
+    }
+    await updateDoc(docRef, {
+        imgs: uploadUrls,
+    });
     store.dispatch(setReportLocation(null));
 };
 
