@@ -483,8 +483,13 @@ const ConflictEvent = ({ c }) => {
                     </Box>
 
                     {c.imgs && (
-                        <Box w={"full"} position={"relative"}>
-                            <Image src={c.imgs[currImage]} />
+                        <Box w={"full"} position={"relative"} h={"400px"}>
+                            <Image
+                                src={c.imgs[currImage]}
+                                h={"full"}
+                                w={"full"}
+                                objectFit={"cover"}
+                            />
 
                             <HStack
                                 width={"full"}
