@@ -9,7 +9,15 @@ import {
     VStack,
 } from "@chakra-ui/layout";
 import { Icon } from "@chakra-ui/icon";
-import { MdClose, MdDoneAll, MdMoreVert } from "react-icons/md";
+import {
+    MdClose,
+    MdComment,
+    MdDoneAll,
+    MdLink,
+    MdMoreVert,
+    MdShare,
+    MdSource,
+} from "react-icons/md";
 import {
     PiArrowCircleDown,
     PiArrowCircleDownFill,
@@ -239,6 +247,14 @@ const ConflictEvent = ({ c }) => {
 
         return "Just now";
     }
+    function decimalToDMS(decimal) {
+        const degrees = Math.floor(decimal);
+        const minutesDecimal = (decimal - degrees) * 60;
+        const minutes = Math.floor(minutesDecimal);
+        const seconds = (minutesDecimal - minutes) * 60;
+
+        return `${degrees}° ${minutes}' ${seconds.toFixed(2)}"`;
+    }
     const closeMore = () => {
         setMoreOpen(false);
         setCurrImage(0);
@@ -248,7 +264,8 @@ const ConflictEvent = ({ c }) => {
             <Box
                 shadow={"sm"}
                 _hover={{ shadow: "md", bg: "whiteAlpha.100" }}
-                w={"full"}
+                w={"380px"}
+                overflowX={"hidden"}
                 bg={
                     selectedConflictEvent &&
                     selectedConflictEvent.id === c.id &&
@@ -265,40 +282,164 @@ const ConflictEvent = ({ c }) => {
                 borderBottom={"1px solid rgba(255,255,255,.05)"}
                 cursor={"pointer"}
             >
-                <VStack w={"full"} mb={2}>
-                    <HStack spacing={4} w={"full"}>
-                        <Center
-                            boxSize={"40px"}
-                            w={"40px"}
-                            bg={"red.600"}
-                            borderRadius={"5px"}
-                        >
-                            {c.conflictEventType && (
-                                <Icon
-                                    as={getFFIcon(c.conflictEventType.name)}
-                                    color={"whiteAlpha.900"}
-                                    boxSize={"28px"}
-                                />
-                            )}
-                        </Center>
-                        <VStack
-                            w={"full"}
-                            alignItems={"flex-start"}
-                            flex={1}
-                            spacing={1}
-                        >
-                            <Text
-                                color={"gray.400"}
-                                fontSize={"12px"}
-                                noOfLines={1}
+                <VStack w={"full"} mb={1}>
+                    <HStack spacing={3} w={"full"} justify={"space-between"}>
+                        <HStack>
+                            <Center
+                                boxSize={"32px"}
+                                bg={"red.600"}
+                                rounded={"full"}
                             >
-                                {c.createdDate &&
-                                    timeSince(c.createdDate.toDate())}
-                            </Text>
-                            <Heading size={"sm"} color={"white"} noOfLines={1}>
-                                {c.title}
-                            </Heading>
-                        </VStack>
+                                {c.conflictEventType && (
+                                    <Icon
+                                        as={getFFIcon(c.conflictEventType.name)}
+                                        color={"whiteAlpha.900"}
+                                        boxSize={"18px"}
+                                    />
+                                )}
+                            </Center>
+                            <Box>
+                                <Text
+                                    color={"whiteAlpha.500"}
+                                    fontSize={"12px"}
+                                    noOfLines={1}
+                                >
+                                    {c.createdDate &&
+                                        timeSince(c.createdDate.toDate())}
+                                </Text>
+                                <HStack>
+                                    <Text
+                                        color={"whiteAlpha.800"}
+                                        fontSize={"12px"}
+                                        noOfLines={1}
+                                    >
+                                        {decimalToDMS(c.latitude)}N
+                                    </Text>
+
+                                    <Text
+                                        color={"whiteAlpha.800"}
+                                        fontSize={"12px"}
+                                        noOfLines={1}
+                                    >
+                                        {decimalToDMS(c.longitude)}E
+                                    </Text>
+                                </HStack>
+                            </Box>
+                        </HStack>
+                    </HStack>
+                    <Heading size={"sm"} color={"white"} noOfLines={1} mt={2}>
+                        {c.title}
+                    </Heading>
+                    {/* <Text
+                        fontSize={"sm"}
+                        mt={2}
+                        color={"gray.200"}
+                        noOfLines={1}
+                    >
+                        {c.description}
+                    </Text> */}
+                    {c.imgs && (
+                        <Image
+                            src={c.imgs[0]}
+                            borderRadius={3}
+                            h={"200px"}
+                            w={"full"}
+                            objectFit={"cover"}
+                        />
+                    )}
+                </VStack>
+                <Collapse
+                    in={
+                        selectedConflictEvent &&
+                        selectedConflictEvent.id === c.id
+                    }
+                >
+                    <HStack align={"center"}>
+                        <Box w={"full"} alignItems={"flex-start"} mb={2} mt={2}>
+                            <HStack alignItems={"center"} spacing={1} mb={2}>
+                                <Icon
+                                    as={MdDoneAll}
+                                    color={"whiteAlpha.700"}
+                                    boxSize={"12px"}
+                                />
+                                <Text fontSize={12} color={"whiteAlpha.700"}>
+                                    Authenticity Score
+                                </Text>
+                            </HStack>
+                            <Progress
+                                borderRadius={5}
+                                size={"sm"}
+                                w={"full"}
+                                colorScheme={"whiteAlpha"}
+                                value={authScore}
+                                backgroundColor={"whiteAlpha.100"}
+                            />
+
+                            <HStack mt={2} spacing={0}>
+                                <Button
+                                    flex={1}
+                                    onClick={handleCommentClick}
+                                    size={"sm"}
+                                    fontSize={11}
+                                    variant={"ghost"}
+                                    color={"whiteAlpha.500"}
+                                    _hover={{
+                                        bg: "whiteAlpha.100",
+                                        color: "white",
+                                    }}
+                                    leftIcon={<Icon as={MdShare} />}
+                                    borderRightRadius={0}
+                                >
+                                    Source
+                                </Button>
+                                <Button
+                                    flex={1}
+                                    onClick={handleCommentClick}
+                                    size={"sm"}
+                                    fontSize={11}
+                                    variant={"ghost"}
+                                    color={"whiteAlpha.500"}
+                                    _hover={{
+                                        bg: "whiteAlpha.100",
+                                        color: "white",
+                                    }}
+                                    borderRadius={0}
+                                >
+                                    Comment{" "}
+                                    {user && `(${selectedComments?.length})`}
+                                </Button>
+                                <Button
+                                    borderLeftRadius={0}
+                                    flex={1}
+                                    size={"sm"}
+                                    variant={"ghost"}
+                                    fontSize={11}
+                                    color={"whiteAlpha.500"}
+                                    _hover={{
+                                        bg: "whiteAlpha.100",
+                                        color: "white",
+                                    }}
+                                    borderRadius={0}
+                                    onClick={handleReportClick}
+                                >
+                                    Report
+                                </Button>
+                                <IconButton
+                                    borderLeftRadius={0}
+                                    size={"sm"}
+                                    variant={"ghost"}
+                                    color={"whiteAlpha.500"}
+                                    _hover={{
+                                        bg: "whiteAlpha.100",
+                                        color: "white",
+                                    }}
+                                    icon={<Icon as={MdMoreVert} />}
+                                >
+                                    Report
+                                </IconButton>
+                            </HStack>
+                        </Box>
+
                         {user &&
                             selectedConflictEvent &&
                             selectedConflictEvent.id === c.id && (
@@ -348,83 +489,12 @@ const ConflictEvent = ({ c }) => {
                                 </VStack>
                             )}
                     </HStack>
-                    {/* <Text
-                        fontSize={"sm"}
-                        mt={2}
-                        color={"gray.200"}
-                        noOfLines={1}
-                    >
-                        {c.description}
-                    </Text> */}
-                </VStack>
-                <Collapse
-                    in={
-                        selectedConflictEvent &&
-                        selectedConflictEvent.id === c.id
-                    }
-                >
-                    <Box w={"full"} alignItems={"flex-start"} mb={2} mt={2}>
-                        <HStack alignItems={"center"} spacing={1} mb={2}>
-                            <Icon
-                                as={MdDoneAll}
-                                color={"whiteAlpha.700"}
-                                boxSize={"12px"}
-                            />
-                            <Text fontSize={12} color={"whiteAlpha.700"}>
-                                Authenticity Score
-                            </Text>
-                        </HStack>
-                        <Progress
-                            borderRadius={5}
-                            size={"sm"}
-                            w={"full"}
-                            colorScheme={"whiteAlpha"}
-                            value={authScore}
-                            backgroundColor={"whiteAlpha.100"}
-                        />
-                    </Box>
-
-                    <HStack my={1} spacing={0}>
-                        <Button
-                            flex={1}
-                            onClick={handleCommentClick}
-                            size={"sm"}
-                            variant={"ghost"}
-                            color={"whiteAlpha.500"}
-                            _hover={{ bg: "whiteAlpha.100", color: "white" }}
-                            borderRightRadius={0}
-                        >
-                            Comment {user && `(${selectedComments?.length})`}
-                        </Button>
-                        <Button
-                            borderLeftRadius={0}
-                            flex={1}
-                            size={"sm"}
-                            variant={"ghost"}
-                            color={"whiteAlpha.500"}
-                            _hover={{ bg: "whiteAlpha.100", color: "white" }}
-                            borderRadius={0}
-                            onClick={handleReportClick}
-                        >
-                            Report
-                        </Button>
-                        <IconButton
-                            borderLeftRadius={0}
-                            size={"sm"}
-                            variant={"ghost"}
-                            color={"whiteAlpha.500"}
-                            _hover={{ bg: "whiteAlpha.100", color: "white" }}
-                            icon={<Icon as={MdMoreVert} />}
-                        >
-                            Report
-                        </IconButton>
-                    </HStack>
                 </Collapse>
             </Box>
             <Modal
                 isOpen={moreOpen}
                 onClose={closeMore}
-                size={"2xl"}
+                size={"3xl"}
                 isCentered
             >
                 <ModalOverlay />

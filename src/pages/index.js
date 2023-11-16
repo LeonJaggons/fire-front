@@ -160,8 +160,7 @@ const ConflictSideBar = () => {
     // }, []);
     return (
         <VStack
-            minW={"320px"}
-            maxW={"25vw"}
+            minW={"380px"}
             h={"full"}
             bg={"rgb(17,19,21)"}
             alignItems={"flex-start"}
@@ -232,8 +231,9 @@ const ConflictSideBar = () => {
                 flex={1}
                 hidden={sideBarState !== "CONFLICT"}
                 style={{ flex: 1 }}
+                w={"380px"}
             >
-                <Box minW={"320px"} maxW={"25vw"}>
+                <Box minW={"380px"} w={"380px"}>
                     <ConflictList />
                 </Box>
             </SlideFade>
