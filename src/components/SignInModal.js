@@ -130,7 +130,7 @@ const SignUpForm = () => {
         const userID = userCred.user.uid;
         const userData = {
             ...newUser,
-            ipAddr: ipAddress,
+            ipAddr: ipAddress ?? "",
             createdDate: new Date(),
             userId: userID,
         };

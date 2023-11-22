@@ -233,7 +233,12 @@ const ConflictSideBar = () => {
                 style={{ flex: 1 }}
                 w={"380px"}
             >
-                <Box minW={"380px"} w={"380px"}>
+                <Box
+                    minW={"380px"}
+                    w={"380px"}
+                    h={"calc(100vh - 140px)"}
+                    overflowY={"scroll"}
+                >
                     <ConflictList />
                 </Box>
             </SlideFade>

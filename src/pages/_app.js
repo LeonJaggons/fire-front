@@ -258,7 +258,8 @@ const ReportButton = () => {
         <>
             <Button
                 onClick={handleClick}
-                fontWeight={400}
+                fontWeight={500}
+                letterSpacing={-0.5}
                 fontSize={"14px"}
                 variant={"ghost"}
                 color={"gray.200"}

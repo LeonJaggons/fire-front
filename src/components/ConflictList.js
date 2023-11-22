@@ -66,9 +66,8 @@ export const ConflictList = () => {
         (state) => state.conflict.conflictEvents
     );
     return (
-        <VStack
+        <Box
             // bg={"black"}
-            h={"full"}
             alignItems={"flex-start"}
             w={"full"}
             spacing={0}
@@ -76,7 +75,7 @@ export const ConflictList = () => {
             {conflictEvents?.map((c) => (
                 <ConflictEvent c={c} />
             ))}
-        </VStack>
+        </Box>
     );
 };
 const ConflictEvent = ({ c }) => {
@@ -282,7 +281,7 @@ const ConflictEvent = ({ c }) => {
                 borderBottom={"1px solid rgba(255,255,255,.05)"}
                 cursor={"pointer"}
             >
-                <VStack w={"full"} mb={1}>
+                <VStack w={"full"} mb={1} alignItems={"flex-start"}>
                     <HStack spacing={3} w={"full"} justify={"space-between"}>
                         <HStack>
                             <Center
