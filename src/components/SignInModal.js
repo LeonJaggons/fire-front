@@ -162,7 +162,7 @@ const SignUpForm = () => {
                 </Box>
                 <Box w={"full"}>
                     <Text mb={1}>Password</Text>
-                    <Input onChange={updatePassword} />
+                    <Input type={"password"} onChange={updatePassword} />
                 </Box>
                 <Button
                     mt={2}
