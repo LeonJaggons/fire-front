@@ -42,7 +42,7 @@ export default function Home() {
                 <title>FireFront</title>
                 <meta
                     name="description"
-                    content="Create mapping apps with Next.js Leaflet Starter"
+                    content="See realtime info about whats happening on the battlefield."
                 />
                 <link rel="icon" href="/favicon.ico" />
             </Head>
